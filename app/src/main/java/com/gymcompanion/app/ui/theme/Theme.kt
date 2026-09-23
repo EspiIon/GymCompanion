@@ -2,6 +2,7 @@ package com.gymcompanion.app.ui.theme
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // ── Nothing OS — Official Brand Palette ───────────────────────────────────────
@@ -104,11 +105,56 @@ private val DarkColorScheme = darkColorScheme(
     scrim                = Color(0xCC000000)
 )
 
+enum class AppTheme { OLED, WARM, HIGH_CONTRAST }
+
+data class AppThemeColors(
+    val background: Color,
+    val surface: Color,
+    val text: Color,
+    val accent: Color,
+    val warm: Boolean,
+    val highContrast: Boolean
+)
+
+val LocalAppThemeColors = staticCompositionLocalOf {
+    AppThemeColors(NothingBlack, NothingDeep, NothingWhite, DataMint, false, false)
+}
+
+private fun themeColors(theme: AppTheme): AppThemeColors = when (theme) {
+    AppTheme.OLED -> AppThemeColors(NothingBlack, NothingDeep, NothingWhite, DataMint, false, false)
+    AppTheme.WARM -> AppThemeColors(Color(0xFF080705), Color(0xFF17130F), Color(0xFFFFF3E5), DataOrange, true, false)
+    AppTheme.HIGH_CONTRAST -> AppThemeColors(NothingBlack, Color(0xFF202020), NothingWhite, NothingYellow, false, true)
+}
+
 @Composable
-fun GymCompanionTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = DarkColorScheme,
-        typography = AppTypography,
-        content = content
-    )
+fun GymCompanionTheme(
+    theme: AppTheme = AppTheme.OLED,
+    content: @Composable () -> Unit
+) {
+    val colors = themeColors(theme)
+    val scheme = if (theme == AppTheme.WARM) {
+        DarkColorScheme.copy(
+            background = colors.background,
+            surface = colors.surface,
+            onBackground = colors.text,
+            onSurface = colors.text,
+            primary = colors.accent,
+            secondary = DataAmber
+        )
+    } else {
+        DarkColorScheme.copy(
+            background = colors.background,
+            surface = colors.surface,
+            onBackground = colors.text,
+            onSurface = colors.text,
+            primary = colors.accent
+        )
+    }
+    androidx.compose.runtime.CompositionLocalProvider(LocalAppThemeColors provides colors) {
+        MaterialTheme(
+            colorScheme = scheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }

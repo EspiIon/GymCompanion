@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymcompanion.app.ui.components.AppPetBar
 import com.gymcompanion.app.ui.components.AppPetSheet
 import com.gymcompanion.app.viewmodel.PetViewModel
+import com.gymcompanion.app.viewmodel.SettingsViewModel
 import com.gymcompanion.app.ui.navigation.*
 import com.gymcompanion.app.ui.screens.ai.AiScreen
 import com.gymcompanion.app.ui.screens.body.BodyScreen
@@ -45,7 +46,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            GymCompanionTheme {
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val themeName by settingsViewModel.theme.collectAsStateWithLifecycle()
+            GymCompanionTheme(
+                theme = when (themeName) {
+                    "warm" -> AppTheme.WARM
+                    "contrast" -> AppTheme.HIGH_CONTRAST
+                    else -> AppTheme.OLED
+                }
+            ) {
                 GymCompanionAppUI()
             }
         }

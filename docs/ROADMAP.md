@@ -23,7 +23,7 @@ Réorganisation documentaire réalisée : README, architecture, guide de dévelo
 
 ## Usage, performance et interface
 
-État au 23 septembre 2026 : première passe U02/U03 implémentée et compilée, sans validation sur appareil. Un bandeau persistant remplace la page du compagnon ; il ouvre une fiche flottante et utilise une mascotte Canvas. Les graphiques principaux du poids et de progression sont désormais tactiles et plus hauts. Les petites libellés du parcours modifié visent 12 sp. Le rendu sur appareil, le contraste, la grande police et TalkBack restent à valider.
+État au 23 septembre 2026 : refonte U02/U03 et finition visuelle implémentées et compilées. La palette Nothing est centralisée, les doublons de titres de composition ont été retirés, les graphiques interactifs ont été étendus, les boutons flottants sont harmonisés, l'appui long permet de déplacer un aliment entre repas et trois thèmes visuels sont disponibles. L'émulateur `habit16` n'a pas pu démarrer car `/dev/kvm` n'est pas disponible ; la validation sur appareil reste à reprendre lorsqu'un appareil est connecté.
 
 | ID | Travail | Critères de fin |
 | --- | --- | --- |

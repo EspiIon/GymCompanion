@@ -46,6 +46,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val carbsGoal       by viewModel.carbsGoal.collectAsStateWithLifecycle()
     val fatGoal         by viewModel.fatGoal.collectAsStateWithLifecycle()
     val autoMacroGoals  by viewModel.autoMacroGoals.collectAsStateWithLifecycle()
+    val theme           by viewModel.theme.collectAsStateWithLifecycle()
     val autoBackup      by viewModel.autoBackup.collectAsStateWithLifecycle()
     val lastBackupAt    by viewModel.lastBackupAt.collectAsStateWithLifecycle()
     val driveEmail      by viewModel.driveEmail.collectAsStateWithLifecycle()
@@ -113,7 +114,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(NothingBlack),
-        contentPadding = PaddingValues(bottom = 110.dp, top = 0.dp)
+        contentPadding = PaddingValues(bottom = 88.dp, top = 0.dp)
     ) {
         item(key = "header") {
             Spacer(Modifier.height(14.dp))
@@ -134,6 +135,32 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     }
                 }
             }
+        }
+
+        item(key = "theme") {
+            WidgetForm(modifier = Modifier.fillMaxWidth(), title = "THÈME VISUEL") {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        "oled" to "OLED",
+                        "warm" to "CHAUD",
+                        "contrast" to "CONTRASTE"
+                    ).forEach { (key, label) ->
+                        OutlinedButton(
+                            onClick = { viewModel.setTheme(key) },
+                            modifier = Modifier.weight(1f),
+                            border = BorderStroke(1.dp, if (theme == key) NothingWhite else NothingBorderMid),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (theme == key) NothingDark2 else Color.Transparent,
+                                contentColor = if (theme == key) NothingWhite else NothingGrey2
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(label, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
         }
 
         // ── PROFILE ────────────────────────────────────────────────────────────

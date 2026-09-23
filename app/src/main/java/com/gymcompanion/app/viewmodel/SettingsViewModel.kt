@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gymcompanion.app.data.backup.BackupManager
@@ -47,6 +48,7 @@ class SettingsViewModel @Inject constructor(
         val PET_STYLE_PREF           = intPreferencesKey("pet_trame_style")
         val PET_VARIANT_PREF         = intPreferencesKey("pet_variant")
         val PET_COLOR_PREF           = intPreferencesKey("pet_color")
+        val THEME_PREF               = stringPreferencesKey("app_theme")
     }
 
     val userProfile: StateFlow<UserProfile?> =
@@ -88,6 +90,14 @@ class SettingsViewModel @Inject constructor(
     val fatGoal: StateFlow<Float?> =
         dataStore.data.map { it[FAT_GOAL_PREF] }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val theme: StateFlow<String> =
+        dataStore.data.map { it[THEME_PREF] ?: "oled" }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "oled")
+
+    fun setTheme(value: String) = viewModelScope.launch {
+        dataStore.edit { it[THEME_PREF] = value }
+    }
 
     val autoMacroGoals: StateFlow<Boolean> =
         dataStore.data.map { it[AUTO_MACRO_GOALS_PREF] ?: true }

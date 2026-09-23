@@ -127,11 +127,9 @@ fun BodyScreen(
                         title = "ÉVOLUTION DU POIDS · 30 J"
                     ) {
                         val sorted = weights.sortedBy { it.date }
-                        Row(Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             NLabel("MESURES SUR 30 JOURS", size = 12.sp)
-                            NLabel("${numStr(sorted.first().weightKg!!)} → ${numStr(sorted.last().weightKg!!)} KG",
-                                color = NothingGrey1)
+                            NLabel("${numStr(sorted.first().weightKg!!)} → ${numStr(sorted.last().weightKg!!)} KG", color = NothingGrey1)
                         }
                         Spacer(Modifier.height(20.dp))
                         InteractiveTrendChart(
@@ -160,15 +158,13 @@ fun BodyScreen(
                 item(key = "chart_comp_spacer") { Spacer(Modifier.height(8.dp)) }
                 item(key = "chart_comp") {
                     WidgetForm(modifier = Modifier.fillMaxWidth(), title = "COMPOSITION · 30 J") {
-                        Row(Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            NLabel("COMPOSITION · 30 J")
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            NLabel("MESURES SUR 30 JOURS", size = 12.sp)
                             // Légende : pattern = signification
                             Row(verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                LegendEntry(color = NothingWhite, dashed = false, label = "MUSCLE")
-                                LegendEntry(color = NothingRed,   dashed = true,  label = "GRAISSE")
+                                LegendEntry(color = DataLavender, dashed = false, label = "MUSCLE")
+                                LegendEntry(color = DataCoral, dashed = true, label = "GRAISSE")
                             }
                         }
                         // Deltas

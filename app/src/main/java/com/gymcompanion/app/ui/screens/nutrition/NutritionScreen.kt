@@ -49,6 +49,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
     var prefillProduct by remember { mutableStateOf<ScannedProduct?>(null) }
     var prefillEntry by remember { mutableStateOf<FoodEntry?>(null) }
     var editingEntry by remember { mutableStateOf<FoodEntry?>(null) }
+    var movingEntry by remember { mutableStateOf<FoodEntry?>(null) }
     var showCreatineDialog by remember { mutableStateOf(false) }
     val creatineToday by viewModel.creatineToday.collectAsStateWithLifecycle()
 
@@ -255,7 +256,8 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                                         showAddDialog = true
                                     }
                                 },
-                                onEntryClick = { editingEntry = it }
+                                onEntryClick = { editingEntry = it },
+                                onEntryLongClick = { movingEntry = it }
                             )
                         }
                     }
@@ -356,6 +358,17 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
         )
     }
 
+    movingEntry?.let { entry ->
+        MoveFoodEntryDialog(
+            entry = entry,
+            onDismiss = { movingEntry = null },
+            onMove = { meal ->
+                viewModel.updateEntry(entry.copy(mealType = meal))
+                movingEntry = null
+            }
+        )
+    }
+
     editingEntry?.let { entry ->
         EditFoodEntryDialog(
             entry = entry,
@@ -438,7 +451,8 @@ fun MealSection(
     mealType: MealType,
     entries: List<FoodEntry>,
     onAddClick: () -> Unit,
-    onEntryClick: (FoodEntry) -> Unit
+    onEntryClick: (FoodEntry) -> Unit,
+    onEntryLongClick: (FoodEntry) -> Unit
 ) {
     val (label, time) = when (mealType) {
         MealType.BREAKFAST -> "PETIT-DÉJEUNER" to "08:00"
@@ -458,7 +472,7 @@ fun MealSection(
             Spacer(Modifier.height(6.dp))
 
             entries.forEach { entry ->
-                FoodRow(entry = entry, onClick = { onEntryClick(entry) })
+                FoodRow(entry = entry, onClick = { onEntryClick(entry) }, onLongClick = { onEntryLongClick(entry) })
             }
 
             // add row
@@ -473,9 +487,10 @@ fun MealSection(
 }
 
 @Composable
-private fun FoodRow(entry: FoodEntry, onClick: () -> Unit) {
+@OptIn(ExperimentalFoundationApi::class)
+private fun FoodRow(entry: FoodEntry, onClick: () -> Unit, onLongClick: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick)
+        Modifier.fillMaxWidth().combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .border(0.dp, Color.Transparent).padding(vertical = 11.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -500,6 +515,48 @@ private fun FoodRow(entry: FoodEntry, onClick: () -> Unit) {
         NLabel("KCAL", size = 8.sp)
     }
     Box(Modifier.fillMaxWidth().height(1.dp).background(NothingDivider))
+}
+
+@Composable
+private fun MoveFoodEntryDialog(
+    entry: FoodEntry,
+    onDismiss: () -> Unit,
+    onMove: (MealType) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = NothingDark,
+        title = { Text("Déplacer l’aliment", color = NothingWhite) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(entry.name, color = NothingGrey1, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                NLabel("REPAS ACTUEL · ${mealLabel(entry.mealType)}", color = NothingGrey2, size = 12.sp)
+                MealType.entries.forEach { meal ->
+                    if (meal != entry.mealType) {
+                        OutlinedButton(
+                            onClick = { onMove(meal) },
+                            modifier = Modifier.fillMaxWidth(),
+                            border = BorderStroke(1.dp, NothingBorderMid),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(mealLabel(meal), color = NothingWhite, fontSize = 14.sp)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Annuler", color = NothingGrey2) }
+        }
+    )
+}
+
+private fun mealLabel(meal: MealType): String = when (meal) {
+    MealType.BREAKFAST -> "Petit-déjeuner"
+    MealType.LUNCH -> "Déjeuner"
+    MealType.DINNER -> "Dîner"
+    MealType.SNACK -> "Collation"
 }
 
 // ── Quick-add : favoris + récents, 1 tap = ajout au repas déduit de l'heure ────

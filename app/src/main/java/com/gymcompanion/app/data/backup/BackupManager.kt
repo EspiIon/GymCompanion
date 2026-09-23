@@ -24,6 +24,7 @@ import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.REMINDER_MIN_P
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.TARGET_WEIGHT_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_VARIANT_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_COLOR_PREF
+import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.THEME_PREF
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -61,7 +62,8 @@ data class BackupSettings(
     val fatGoal: Float? = null,
     val autoMacroGoals: Boolean? = null,
     val petVariant: Int? = null,
-    val petColor: Int? = null
+    val petColor: Int? = null,
+    val theme: String? = null
 )
 
 data class BackupData(
@@ -294,7 +296,8 @@ class BackupManager @Inject constructor(
             fatGoal = p[FAT_GOAL_PREF],
             autoMacroGoals = p[AUTO_MACRO_GOALS_PREF],
             petVariant = p[PET_VARIANT_PREF],
-            petColor = p[PET_COLOR_PREF]
+            petColor = p[PET_COLOR_PREF],
+            theme = p[THEME_PREF]
         )
     }
 
@@ -312,6 +315,7 @@ class BackupManager @Inject constructor(
             s.autoMacroGoals?.let { p[AUTO_MACRO_GOALS_PREF] = it }
             s.petVariant?.let { p[PET_VARIANT_PREF] = it.coerceIn(0, 3) }
             s.petColor?.let { p[PET_COLOR_PREF] = it.coerceIn(0, 3) }
+            s.theme?.let { p[THEME_PREF] = it }
         }
     }
 
