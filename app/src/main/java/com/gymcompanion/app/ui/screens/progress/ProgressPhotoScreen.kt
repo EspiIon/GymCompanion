@@ -116,23 +116,21 @@ fun ProgressPhotoScreen(viewModel: ProgressPhotoViewModel = hiltViewModel()) {
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 // Gallery
-                SmallFloatingActionButton(
+                SmallFAB(
                     onClick = { galleryLauncher.launch("image/*") },
-                    containerColor = NothingDeep, contentColor = NothingWhite,
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.border(1.dp, NothingBorderMid, RoundedCornerShape(12.dp))
-                ) { Icon(Icons.Rounded.PhotoLibrary, "Galerie", modifier = Modifier.size(18.dp)) }
+                    icon = Icons.Rounded.PhotoLibrary,
+                    contentDescription = "Ouvrir la galerie"
+                )
 
                 // Camera
-                FloatingActionButton(
+                StandardFAB(
                     onClick = {
                         val uri = viewModel.createCameraUri()
                         cameraLauncher.launch(uri)
                     },
-                    containerColor = NothingDeep, contentColor = NothingWhite,
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.border(1.dp, NothingBorderMid, RoundedCornerShape(14.dp))
-                ) { Icon(Icons.Rounded.PhotoCamera, "Appareil photo") }
+                    icon = Icons.Rounded.PhotoCamera,
+                    contentDescription = "Prendre une photo"
+                )
             }
         }
     }

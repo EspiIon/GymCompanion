@@ -107,6 +107,7 @@ fun GymCompanionAppUI() {
                     onNavigateToAi        = { navTo(Screen.Ai.route) },
                     onNavigateToCalendar  = { navTo(Screen.Calendar.route) },
                     onNavigateToGoals     = { navTo(Screen.Goals.route) },
+                    petState              = petState,
                     onNavigateToPet       = { showPetSheet = true },
                     onNavigateToMenu      = { navController.navigate(Screen.Workout.route) }
                 )

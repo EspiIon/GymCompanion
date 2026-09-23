@@ -241,28 +241,21 @@ fun WorkoutScreen(
         }
 
         // Rest timer FAB (F1)
-        SmallFloatingActionButton(
+        SmallFAB(
             onClick = { showTimerDialog = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 160.dp)
-                .border(1.dp, if (timerRunning) NothingYellow.copy(alpha = 0.6f) else NothingBorderMid, RoundedCornerShape(10.dp)),
-            containerColor = NothingDeep,
-            contentColor = if (timerRunning) NothingYellow else NothingWhite,
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Icon(Icons.Rounded.Timer, contentDescription = "Minuteur", modifier = Modifier.size(18.dp))
-        }
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 84.dp),
+            icon = Icons.Rounded.Timer,
+            contentDescription = "Ouvrir le minuteur",
+            tinted = timerRunning
+        )
 
         // Add session FAB
-        FloatingActionButton(
+        StandardFAB(
             onClick = { showAddDialog = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 108.dp)
-                .border(1.dp, NothingBorderMid, RoundedCornerShape(14.dp)),
-            containerColor = NothingDeep,
-            contentColor = NothingWhite,
-            shape = RoundedCornerShape(14.dp)
-        ) {
-            Icon(Icons.Rounded.Add, contentDescription = "Nouvelle séance")
-        }
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 16.dp),
+            icon = Icons.Rounded.Add,
+            contentDescription = "Créer une séance"
+        )
     }
 
     if (showAddDialog) {
@@ -682,7 +675,7 @@ fun AddWorkoutDialog(
                         onConfirm(name, dur, cal, category, musclesStr, notes, drafts)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(8.dp)
             ) { Text("Enregistrer", color = NothingWhite) }
         },

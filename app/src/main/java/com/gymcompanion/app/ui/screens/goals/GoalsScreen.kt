@@ -331,7 +331,7 @@ private fun AddGoalDialog(
         confirmButton = {
             Button(
                 onClick = { if (title.isNotBlank()) onConfirm(title.trim(), category) },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(10.dp)
             ) { Text("Ajouter", color = NothingWhite) }
         },

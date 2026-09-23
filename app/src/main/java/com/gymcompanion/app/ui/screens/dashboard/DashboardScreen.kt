@@ -28,7 +28,6 @@ import com.gymcompanion.app.ui.theme.*
 import com.gymcompanion.app.common.todayFlow
 import com.gymcompanion.app.viewmodel.DashboardViewModel
 import com.gymcompanion.app.viewmodel.GoalViewModel
-import com.gymcompanion.app.viewmodel.PetViewModel
 import com.gymcompanion.app.viewmodel.PetUiState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -40,7 +39,7 @@ private val PAD = 24.dp
 fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
     goalVm: GoalViewModel = hiltViewModel(),
-    petVm: PetViewModel = hiltViewModel(),
+    petState: PetUiState = PetUiState(),
     onNavigateToNutrition: () -> Unit = {},
     onNavigateToWorkout: () -> Unit = {},
     onNavigateToSteps: () -> Unit = {},
@@ -53,8 +52,6 @@ fun DashboardScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showMenu by remember { mutableStateOf(false) }
-
-    val petState by petVm.state.collectAsStateWithLifecycle()
 
     val dateFormatter = remember { DateTimeFormatter.ofPattern("EEE d MMM", Locale.FRENCH) }
     val todayStr by todayFlow().collectAsStateWithLifecycle(initialValue = java.time.LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
@@ -201,36 +198,6 @@ fun DashboardScreen(
             }
         }
 
-        item { Spacer(Modifier.height(8.dp)) }
-
-        // Le compagnon vit désormais dans le bandeau commun AppPetBar. On garde ici
-        // seulement un rappel discret, sans dupliquer son visage dans une carte.
-        item(key = "pet") {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onNavigateToPet)
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AppPet(
-                    mood = petState.mood,
-                    name = petState.name,
-                    variant = petState.variant,
-                    colorIndex = petState.colorIndex,
-                    onTap = onNavigateToPet,
-                    modifier = Modifier.size(38.dp)
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    text = "${petState.goalsMet} objectif${if (petState.goalsMet > 1) "s" else ""} atteint${if (petState.goalsMet > 1) "s" else ""} sur ${petState.goalsTotal}",
-                    color = NothingGrey1,
-                    fontSize = 13.sp,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(Icons.Rounded.ChevronRight, null, tint = NothingGrey2, modifier = Modifier.size(20.dp))
-            }
-        }
         item { Spacer(Modifier.height(8.dp)) }
 
         // ── MACROS ──────────────────────────────────────────────────────────────

@@ -39,15 +39,19 @@ fun NothingCard(
     val cardColor = NothingCardSurface
     val shape = RoundedCornerShape(24.dp)
     val petTransition = rememberInfiniteTransition("card-pet-border")
-    val petTravel by petTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(4_800, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "card-pet-travel"
-    )
+    val petTravel by if (pet != null) {
+        petTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(4_800, easing = EaseInOutSine),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "card-pet-travel"
+        )
+    } else {
+        androidx.compose.runtime.mutableFloatStateOf(0f)
+    }
     val base = modifier
         .clip(shape)
         .background(cardColor)
@@ -101,7 +105,8 @@ fun NothingCard(
                     .align(Alignment.BottomEnd)
                     .size(34.dp)
                     .offset(x = (-18 * petTravel).dp),
-                onTap = {}
+                onTap = {},
+                interactive = false
             )
         }
     }
@@ -184,7 +189,7 @@ fun SmallFAB(
         containerColor = NothingDeep,
         contentColor = if (tinted) NothingYellow else NothingWhite,
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier.border(1.dp, if (tinted) NothingYellow.copy(alpha = 0.6f) else NothingBorderMid, RoundedCornerShape(10.dp))
+        modifier = modifier.border(1.dp, NothingBorderMid, RoundedCornerShape(10.dp))
     ) { Icon(icon, contentDescription = contentDescription, modifier = Modifier.size(18.dp)) }
 }
 

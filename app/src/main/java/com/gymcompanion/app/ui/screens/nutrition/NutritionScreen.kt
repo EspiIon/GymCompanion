@@ -14,6 +14,8 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
@@ -262,7 +264,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
 
             // FABs
             Row(
-                Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 108.dp),
+                Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -290,7 +292,12 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                         contentColor = NothingWhite,
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Cr", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "Cr",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.semantics { contentDescription = "Ajouter de la créatine" }
+                        )
                     }
                 }
             }

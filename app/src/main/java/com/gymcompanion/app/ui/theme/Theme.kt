@@ -81,14 +81,14 @@ val AccentAmber    = NothingYellow
 
 // ── Material 3 colour scheme ──────────────────────────────────────────────────
 private val DarkColorScheme = darkColorScheme(
-    primary              = DataMint,
+    primary              = NothingWhite,
     onPrimary            = NothingBlack,
     primaryContainer     = NothingDark2,
-    onPrimaryContainer   = NothingGrey1,
-    secondary            = DataMint,
+    onPrimaryContainer   = NothingWhite,
+    secondary            = NothingYellow,
     onSecondary          = NothingBlack,
-    secondaryContainer   = Color(0xFF163A31),
-    onSecondaryContainer = DataMint,
+    secondaryContainer   = NothingDark2,
+    onSecondaryContainer = NothingWhite,
     tertiary             = DataLavender,
     onTertiary           = NothingWhite,
     background           = NothingBlack,

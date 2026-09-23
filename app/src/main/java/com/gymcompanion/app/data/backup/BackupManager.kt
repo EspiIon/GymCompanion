@@ -22,6 +22,8 @@ import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.REMINDER_ENABL
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.REMINDER_HOUR_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.REMINDER_MIN_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.TARGET_WEIGHT_PREF
+import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_VARIANT_PREF
+import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_COLOR_PREF
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -57,7 +59,9 @@ data class BackupSettings(
     val proteinGoal: Float? = null,
     val carbsGoal: Float? = null,
     val fatGoal: Float? = null,
-    val autoMacroGoals: Boolean? = null
+    val autoMacroGoals: Boolean? = null,
+    val petVariant: Int? = null,
+    val petColor: Int? = null
 )
 
 data class BackupData(
@@ -288,7 +292,9 @@ class BackupManager @Inject constructor(
             proteinGoal = p[PROTEIN_GOAL_PREF],
             carbsGoal = p[CARBS_GOAL_PREF],
             fatGoal = p[FAT_GOAL_PREF],
-            autoMacroGoals = p[AUTO_MACRO_GOALS_PREF]
+            autoMacroGoals = p[AUTO_MACRO_GOALS_PREF],
+            petVariant = p[PET_VARIANT_PREF],
+            petColor = p[PET_COLOR_PREF]
         )
     }
 
@@ -304,6 +310,8 @@ class BackupManager @Inject constructor(
             s.carbsGoal?.let { p[CARBS_GOAL_PREF] = it }
             s.fatGoal?.let { p[FAT_GOAL_PREF] = it }
             s.autoMacroGoals?.let { p[AUTO_MACRO_GOALS_PREF] = it }
+            s.petVariant?.let { p[PET_VARIANT_PREF] = it.coerceIn(0, 3) }
+            s.petColor?.let { p[PET_COLOR_PREF] = it.coerceIn(0, 3) }
         }
     }
 

@@ -79,6 +79,7 @@ fun AppPet(
     modifier: Modifier = Modifier,
     variant: Int = 0,
     colorIndex: Int = 0,
+    interactive: Boolean = true,
     onTap: () -> Unit = {}
 ) {
     val transition = rememberInfiniteTransition("app-pet")
@@ -114,9 +115,9 @@ fun AppPet(
     Box(
         modifier = modifier
             .semantics { contentDescription = "$name, compagnon. Toucher pour interagir." }
-            .pointerInput(name) {
+            .then(if (interactive) Modifier.pointerInput(name) {
                 detectTapGestures(onTap = { onTap() })
-            }
+            } else Modifier)
     ) {
         Canvas(Modifier.fillMaxSize()) {
             val unit = size.minDimension / 16f
@@ -236,7 +237,9 @@ fun AppPetBar(
             .height(58.dp)
             .background(NothingCardSurface)
             .clickable(onClick = onClick)
-            .semantics { contentDescription = "${state.name}, ${state.goalsMet} objectifs sur ${state.goalsTotal}. Toucher pour interagir." },
+            .semantics(mergeDescendants = true) {
+                contentDescription = "${state.name}, ${state.goalsMet} objectifs sur ${state.goalsTotal}. Toucher pour ouvrir la fiche du compagnon."
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AppPet(
@@ -244,7 +247,8 @@ fun AppPetBar(
             name = state.name,
             variant = state.variant,
             colorIndex = state.colorIndex,
-            onTap = onClick,
+            onTap = {},
+            interactive = false,
             modifier = Modifier.size(58.dp)
         )
         Spacer(Modifier.width(10.dp))
@@ -272,8 +276,7 @@ fun AppPetBar(
                 color = NothingGrey2,
                 fontSize = 12.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.clickable(onClick = onClick)
+                overflow = TextOverflow.Ellipsis
             )
         }
         Spacer(Modifier.width(8.dp))
@@ -281,9 +284,7 @@ fun AppPetBar(
             text = "VOIR",
             color = NothingGrey2,
             size = 11.sp,
-            modifier = Modifier
-                .clickable(onClick = onClick)
-                .padding(horizontal = 6.dp, vertical = 16.dp)
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 16.dp)
         )
     }
 }

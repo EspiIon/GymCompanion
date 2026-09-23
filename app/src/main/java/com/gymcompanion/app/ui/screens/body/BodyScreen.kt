@@ -242,13 +242,12 @@ fun BodyScreen(
             }
         }
 
-        FloatingActionButton(
+        StandardFAB(
             onClick = { showAddDialog = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 80.dp)
-                .border(1.dp, NothingBorderMid, RoundedCornerShape(14.dp)),
-            containerColor = NothingDeep, contentColor = NothingWhite,
-            shape = RoundedCornerShape(14.dp)
-        ) { Icon(Icons.Rounded.Add, contentDescription = "Ajouter mesure") }
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 16.dp),
+            icon = Icons.Rounded.Add,
+            contentDescription = "Ajouter une mesure"
+        )
     }
 
     if (showAddDialog) {
@@ -560,7 +559,7 @@ fun AddBodyRecordDialog(
                         arm.toFloatOrNull()?.takeIf { it > 0f }
                     )
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = DataMint),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(10.dp)
             ) { Text("Enregistrer", color = NothingWhite) }
         },
