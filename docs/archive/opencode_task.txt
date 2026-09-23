@@ -1,0 +1,1 @@
+Modifier NutritionScreen et NutritionViewModel : quick-add doit permettre d'éditer le grammage et la quantité avant ajout. Utiliser le dialogue existant showAddDialog avec prefillEntry et un champ quantité modifiable. Paramétrer quickAdd dans NutritionViewModel avec grams et quantity optionnels. Utiliser le modèle openrouter/inkling:free.

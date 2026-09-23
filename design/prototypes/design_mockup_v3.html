@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymCompanion — Nothing OS · v3</title>
+<!-- Doto = real dot-matrix font (NDot substitute) · Space Mono = labels -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   NOTHING OS · TRUE MONOCHROME SYSTEM
+   ───────────────────────────────────────────────────────────────────
+   1 · Pure black. White defines form & data. Grey defines hierarchy.
+   2 · ONE accent (Nothing Red) — appears ≤ 3× across the entire app.
+   3 · Dot-matrix numerals (Doto). Monospace labels (Space Mono).
+   4 · Hairlines & whitespace, NOT cards. No emoji. No gradient. No shadow.
+═══════════════════════════════════════════════════════════════════ */
+:root{
+  --black:#000000;
+  --ink:#070707;
+  --line:rgba(255,255,255,0.11);
+  --line-dim:rgba(255,255,255,0.055);
+  --dot-off:rgba(255,255,255,0.10);
+
+  --white:#FFFFFF;
+  --g1:#9A9A9A;   /* secondary */
+  --g2:#5A5A5A;   /* labels */
+  --g3:#2E2E2E;   /* faint */
+
+  --red:#D71921;  /* Nothing Red — the only accent */
+
+  --mono:'Space Mono',monospace;
+  --dot:'Doto',monospace;
+  --body:'Inter',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#040404;font-family:var(--body);color:var(--white);padding:56px 24px 96px}
+
+/* page chrome */
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.45em;color:var(--g2);text-transform:uppercase;text-align:center;margin-bottom:10px}
+.title{font-family:var(--dot);font-weight:700;font-size:44px;letter-spacing:.04em;text-align:center;margin-bottom:6px}
+.subtitle{font-family:var(--mono);font-size:11px;color:var(--g2);text-align:center;letter-spacing:.1em;margin-bottom:48px}
+
+.screens{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+
+/* phone */
+.phone{width:366px;border-radius:46px;background:#000;border:1.5px solid rgba(255,255,255,.09);overflow:hidden;flex-shrink:0;
+  box-shadow:0 0 0 8px #090909,0 0 0 9px rgba(255,255,255,.03)}
+.notch{width:96px;height:24px;background:#000;border-radius:0 0 13px 13px;margin:0 auto}
+.scr{height:772px;overflow:hidden;position:relative;background:#000}
+.body{height:100%;overflow-y:scroll;overflow-x:hidden;padding-bottom:84px;scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.cap{font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--g3);text-transform:uppercase;text-align:center;margin-top:16px}
+
+/* ── PRIMITIVES ─────────────────────────────────────────── */
+.lbl{font-family:var(--mono);font-size:9px;font-weight:400;letter-spacing:.32em;text-transform:uppercase;color:var(--g2)}
+.lbl-w{color:var(--g1)}
+
+/* dot-matrix numerals */
+.num{font-family:var(--dot);font-weight:700;line-height:.92;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.num-xl{font-size:84px;font-weight:600}
+.num-lg{font-size:54px;font-weight:600}
+.num-md{font-size:34px;font-weight:600}
+.num-sm{font-size:22px;font-weight:600}
+.unit{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--g2);letter-spacing:0}
+
+.red{color:var(--red)}
+.w{color:var(--white)}
+.g1{color:var(--g1)}
+.g2{color:var(--g2)}
+
+/* dotted divider — Nothing signature */
+.rule{height:1px;background-image:radial-gradient(circle,var(--line) 1px,transparent 1px);background-size:5px 1px;background-repeat:repeat-x;background-position:left center}
+.rule-solid{height:1px;background:var(--line-dim)}
+
+/* section header (no box) */
+.section{padding:0 24px}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 24px;margin-bottom:14px}
+
+/* glyph LED bar — discrete segments */
+.glyph{display:flex;gap:3px}
+.glyph i{flex:1;background:var(--dot-off);border-radius:1px}
+.glyph.h10 i{height:10px}.glyph.h6 i{height:6px}.glyph.h3 i{height:3px}
+.glyph i.on{background:var(--white)}
+.glyph i.red{background:var(--red)}
+
+/* status dot */
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block}
+
+/* nav */
+.nav{position:absolute;bottom:0;left:0;right:0;height:74px;border-top:1px solid var(--line);background:#000;display:flex;align-items:flex-start;padding-top:14px}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px}
+.nav svg{width:21px;height:21px;stroke:var(--g2);fill:none;stroke-width:1.4}
+.nav a.on svg{stroke:var(--white)}
+.nav .ndot{width:3px;height:3px;border-radius:50%;background:transparent}
+.nav a.on .ndot{background:var(--white)}
+
+/* fab */
+.fab{position:absolute;bottom:90px;right:20px;width:50px;height:50px;border:1px solid var(--line);border-radius:14px;background:#000;display:flex;align-items:center;justify-content:center}
+.fab svg{width:20px;height:20px;stroke:var(--white);stroke-width:1.4}
+
+/* header block */
+.hdr{padding:22px 24px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.hdr .scr-title{font-family:var(--dot);font-weight:600;font-size:30px;letter-spacing:.04em;line-height:1}
+
+/* line icon (category) */
+.ic{width:22px;height:22px;stroke:var(--g1);fill:none;stroke-width:1.4;flex-shrink:0}
+
+/* meal/list row */
+.row{display:flex;align-items:center;gap:14px;padding:15px 24px}
+.row .nm{font-size:13px;font-weight:500;flex:1;letter-spacing:.01em}
+.row .meta{font-family:var(--mono);font-size:10px;color:var(--g2)}
+
+/* arc center */
+.arcwrap{position:relative}
+.arccenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ── DOC SECTION ───────────────────────────────────────── */
+.doc{max-width:1080px;margin:80px auto 0}
+.doc-h{font-family:var(--mono);font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--g2);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--line-dim)}
+.doc-cell{background:#000;padding:24px}
+.doc-tag{font-family:var(--mono);font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.doc-title{font-family:var(--dot);font-weight:600;font-size:18px;letter-spacing:.03em;margin-bottom:14px}
+.doc-cell p{font-size:12px;color:var(--g1);line-height:1.7}
+.doc-cell .lbl{display:block;margin-bottom:8px}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line-dim);font-family:var(--mono);font-size:11px}
+.kv:last-child{border:0}
+.kv .k{color:var(--g2)}.kv .v{color:var(--white)}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.law{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-dim);font-size:12px;color:var(--g1);line-height:1.5}
+.law:last-child{border:0}
+.law b{color:var(--white);font-weight:600}
+.law .n{font-family:var(--dot);font-weight:700;color:var(--g2);flex-shrink:0;width:18px}
+
+/* compare */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-dim);max-width:1080px;margin:1px auto 0}
+.cmp .col{background:#000;padding:24px}
+.cmp h4{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:14px}
+.cmp .bad h4,.cmp h4.bad{color:var(--red)}
+.cmp h4.good{color:var(--white)}
+.cmp .li{display:flex;gap:8px;padding:6px 0;font-size:12px;color:var(--g1);line-height:1.5;border-bottom:1px solid var(--line-dim)}
+.cmp .li:last-child{border:0}
+.cmp .li .m{font-family:var(--mono);flex-shrink:0;color:var(--g2)}
+</style>
+</head>
+<body>
+
+<div class="kicker">GymCompanion · Design System</div>
+<div class="title">NOTHING / v3</div>
+<div class="subtitle">MONOCHROME · DOT-MATRIX · ONE ACCENT</div>
+
+<div class="screens">
+
+<!-- ══════════════ 01 · DASHBOARD ══════════════ -->
+<div>
+<div class="phone"><div class="notch"></div><div class="scr"><div class="body">
+
+  <!-- header -->
+  <div class="hdr">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">SAM 07 JUIN</div>
+      <div class="scr-title">Aperçu</div>
+    </div>
+    <!-- streak = the one red moment -->
+    <div style="text-align:right">
+      <div class="lbl" style="margin-bottom:6px">SÉRIE</div>
+      <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+        <span class="sdot"></span>
+        <span class="num num-sm red">14</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+
+  <!-- HERO · calories — no card, just the ring + number breathing on black -->
+  <div style="display:flex;align-items:center;gap:22px;padding:0 24px">
+    <div class="arcwrap" style="width:128px;height:128px;flex-shrink:0">
+      <svg width="128" height="128" viewBox="0 0 128 128" style="transform:rotate(-135deg)">
+        <!-- segmented track -->
+        <circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2"
+          stroke-dasharray="1.4 3.2" pathLength="270" stroke-dashoffset="-90"/>
+        <!-- progress 74% — WHITE -->
+        <circle cx="64" cy="64" r="56" fill="none" stroke="#fff" stroke-width="2"
+          stroke-dasharray="1.4 3.2" pathLength="270" stroke-dashoffset="-90"
+          style="clip-path:inset(0 26% 0 0)"/>
+      </svg>
+      <div class="arccenter">
+        <div class="num num-md w">1847</div>
+        <div class="lbl" style="margin-top:4px">/ 2500 KCAL</div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:8px">RESTANTES</div>
+      <div class="num num-lg w">653</div>
+      <div class="lbl" style="margin-top:6px">KCAL · 320 BRÛLÉES</div>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+  <div style="height:20px"></div>
+
+  <!-- macros — three columns, hairline separated, mono numbers -->
+  <div style="display:flex;padding:0 24px">
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:8px">PROT</div>
+      <div class="num num-sm w">124<span class="unit">g</span></div>
+      <div class="glyph h3" style="margin-top:10px">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i>
+      </div>
+    </div>
+    <div style="width:1px;background:var(--line-dim);margin:0 18px"></div>
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:8px">GLUC</div>
+      <div class="num num-sm w">198<span class="unit">g</span></div>
+      <div class="glyph h3" style="margin-top:10px">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i>
+      </div>
+    </div>
+    <div style="width:1px;background:var(--line-dim);margin:0 18px"></div>
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:8px">LIP</div>
+      <div class="num num-sm w">54<span class="unit">g</span></div>
+      <div class="glyph h3" style="margin-top:10px">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div style="height:24px"></div>
+
+  <!-- secondary metrics — steps + activity, dense, mono -->
+  <div style="display:flex;padding:0 24px;gap:24px">
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:10px">PAS</div>
+      <div class="num num-md w">7241</div>
+      <div class="glyph h6" style="margin-top:12px">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i>
+      </div>
+      <div class="lbl" style="margin-top:8px">72% · 10 000</div>
+    </div>
+    <div style="flex:1">
+      <div class="lbl" style="margin-bottom:10px">SÉANCES · SEM</div>
+      <div class="num num-md w">4</div>
+      <div class="glyph h6" style="margin-top:12px">
+        <i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i>
+      </div>
+      <div class="lbl" style="margin-top:8px">L M M J V S D</div>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div style="height:24px"></div>
+
+  <!-- body line -->
+  <div style="padding:0 24px">
+    <div class="lbl" style="margin-bottom:14px">COMPOSITION</div>
+    <div style="display:flex;align-items:baseline;gap:6px">
+      <div class="num num-lg w">82.4</div><div class="unit" style="font-size:13px">KG</div>
+      <div style="flex:1"></div>
+      <div style="text-align:right">
+        <div class="lbl" style="margin-bottom:4px">GRAISSE</div>
+        <div class="num num-sm w">18<span class="unit">%</span></div>
+      </div>
+      <div style="width:1px;height:34px;background:var(--line-dim);margin:0 14px"></div>
+      <div style="text-align:right">
+        <div class="lbl" style="margin-bottom:4px">MUSCLE</div>
+        <div class="num num-sm w">40<span class="unit">kg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+
+</div><!-- body -->
+<!-- NAV -->
+<nav class="nav">
+  <a class="on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><polyline points="5,15 10,9 14,13 19,7"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><path d="M12 9 L12 16 M12 11 L7 14 M12 11 L17 14 M12 16 L8 21 M12 16 L16 21"/></svg><span class="ndot"></span></a>
+</nav>
+</div></div>
+<div class="cap">01 — Aperçu</div>
+</div>
+
+<!-- ══════════════ 02 · NUTRITION ══════════════ -->
+<div>
+<div class="phone"><div class="notch"></div><div class="scr"><div class="body">
+
+  <div class="hdr">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">JEU 05 JUIN</div>
+      <div class="scr-title">Nutrition</div>
+    </div>
+    <div style="text-align:right">
+      <div class="lbl" style="margin-bottom:6px">OBJECTIF</div>
+      <div class="num num-sm g1">2500</div>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <!-- big ring -->
+  <div class="arcwrap" style="width:200px;height:200px;margin:0 auto">
+    <svg width="200" height="200" viewBox="0 0 200 200" style="transform:rotate(-135deg)">
+      <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2.5"
+        stroke-dasharray="1.6 3.4" pathLength="270" stroke-dashoffset="-90"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#fff" stroke-width="2.5"
+        stroke-dasharray="1.6 3.4" pathLength="270" stroke-dashoffset="-90"
+        style="clip-path:inset(0 26% 0 0)"/>
+    </svg>
+    <div class="arccenter">
+      <div class="lbl" style="margin-bottom:8px">RESTANTES</div>
+      <div class="num num-xl w" style="font-size:72px">653</div>
+      <div class="lbl" style="margin-top:8px">1847 / 2500 KCAL</div>
+    </div>
+  </div>
+
+  <div style="height:26px"></div>
+
+  <!-- macro split — single thin segmented bar, monochrome with tonal steps -->
+  <div style="padding:0 24px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px" class="lbl">
+      <span>P 124</span><span>G 198</span><span>L 54</span>
+    </div>
+    <div style="display:flex;gap:2px;height:6px">
+      <span style="flex:33;background:#fff;border-radius:1px"></span>
+      <span style="flex:52;background:#8A8A8A;border-radius:1px"></span>
+      <span style="flex:15;background:#3A3A3A;border-radius:1px"></span>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+
+  <!-- meals — time as identifier, no emoji -->
+  <div class="section-head" style="margin-top:22px">
+    <span class="lbl">08:30 · PETIT-DÉJEUNER</span>
+    <span class="num num-sm w" style="font-size:16px">487</span>
+  </div>
+  <div class="row"><span class="meta" style="width:38px">100g</span><span class="nm">Granola, noix</span><span class="num" style="font-family:var(--mono);font-size:13px">310</span></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div class="row"><span class="meta" style="width:38px">120g</span><span class="nm">Banane</span><span class="num" style="font-family:var(--mono);font-size:13px">89</span></div>
+
+  <div style="height:8px"></div>
+  <div class="section-head" style="margin-top:18px">
+    <span class="lbl">13:00 · DÉJEUNER</span>
+    <span class="num num-sm w" style="font-size:16px">724</span>
+  </div>
+  <div class="row"><span class="meta" style="width:38px">200g</span><span class="nm">Poulet grillé</span><span class="num" style="font-family:var(--mono);font-size:13px">330</span></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div class="row"><span class="meta" style="width:38px">150g</span><span class="nm">Riz basmati</span><span class="num" style="font-family:var(--mono);font-size:13px">195</span></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div class="row" style="opacity:.4"><span class="meta" style="width:38px;font-size:16px">+</span><span class="nm g2">Ajouter</span></div>
+
+  <div style="height:20px"></div>
+</div>
+<!-- scan = bordered, mono, no color -->
+<div class="fab" style="width:auto;padding:0 18px;border-radius:13px">
+  <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:1.4"><path d="M4 8 V4 H8 M16 4 H20 V8 M20 16 V20 H16 M8 20 H4 V16"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+  <span style="font-family:var(--mono);font-size:11px;letter-spacing:.15em;margin-left:8px">SCAN</span>
+</div>
+<nav class="nav">
+  <a><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span class="ndot"></span></a>
+  <a class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><polyline points="5,15 10,9 14,13 19,7"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><path d="M12 9 L12 16 M12 11 L7 14 M12 11 L17 14 M12 16 L8 21 M12 16 L16 21"/></svg><span class="ndot"></span></a>
+</nav>
+</div></div>
+<div class="cap">02 — Nutrition</div>
+</div>
+
+<!-- ══════════════ 03 · SÉANCES ══════════════ -->
+<div>
+<div class="phone"><div class="notch"></div><div class="scr"><div class="body">
+
+  <div class="hdr">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">CETTE SEMAINE</div>
+      <div class="scr-title">Séances</div>
+    </div>
+    <div style="text-align:right">
+      <div class="lbl" style="margin-bottom:6px">SÉRIE</div>
+      <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+        <span class="sdot"></span><span class="num num-sm red">14</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:30px"></div>
+
+  <!-- big summary numbers in a row, no boxes -->
+  <div style="display:flex;padding:0 24px">
+    <div style="flex:1">
+      <div class="num num-lg w">4</div>
+      <div class="lbl" style="margin-top:8px">SÉANCES</div>
+    </div>
+    <div style="flex:1">
+      <div class="num num-lg w">5<span class="unit" style="font-size:18px">h</span>20</div>
+      <div class="lbl" style="margin-top:8px">DURÉE</div>
+    </div>
+    <div style="flex:1">
+      <div class="num num-lg w">1248</div>
+      <div class="lbl" style="margin-top:8px">KCAL</div>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+  <!-- week glyph -->
+  <div style="padding:0 24px">
+    <div class="glyph h10">
+      <i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i style="opacity:.4"></i>
+    </div>
+    <div style="display:flex;margin-top:6px">
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">L</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">M</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">M</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">J</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">V</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">S</span>
+      <span class="lbl" style="flex:1;text-align:center;font-size:8px">D</span>
+    </div>
+  </div>
+
+  <div style="height:26px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+  <div class="section-head" style="margin-top:22px"><span class="lbl">HISTORIQUE</span></div>
+
+  <!-- sessions — line icons not emoji -->
+  <div class="row">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="9" y1="8" x2="9" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/></svg>
+    <div style="flex:1">
+      <div class="nm">Push Day</div>
+      <div class="meta" style="margin-top:3px">AUJ · 65 MIN</div>
+    </div>
+    <div class="num" style="font-family:var(--mono);font-size:14px">428<span class="unit"> kcal</span></div>
+  </div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div class="row">
+    <svg class="ic" viewBox="0 0 24 24"><polyline points="4,17 9,11 13,14 20,6"/><polyline points="15,6 20,6 20,11"/></svg>
+    <div style="flex:1">
+      <div class="nm">Run matinal</div>
+      <div class="meta" style="margin-top:3px">HIER · 40 MIN</div>
+    </div>
+    <div class="num" style="font-family:var(--mono);font-size:14px">310<span class="unit"> kcal</span></div>
+  </div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div class="row">
+    <svg class="ic" viewBox="0 0 24 24"><polygon points="13,2 4,14 11,14 10,22 20,9 13,9"/></svg>
+    <div style="flex:1">
+      <div class="nm">HIIT</div>
+      <div class="meta" style="margin-top:3px">LUN · 30 MIN</div>
+    </div>
+    <div class="num" style="font-family:var(--mono);font-size:14px">510<span class="unit"> kcal</span></div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+<div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<nav class="nav">
+  <a><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span class="ndot"></span></a>
+  <a class="on"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><polyline points="5,15 10,9 14,13 19,7"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><path d="M12 9 L12 16 M12 11 L7 14 M12 11 L17 14 M12 16 L8 21 M12 16 L16 21"/></svg><span class="ndot"></span></a>
+</nav>
+</div></div>
+<div class="cap">03 — Séances</div>
+</div>
+
+<!-- ══════════════ 04 · PAS ══════════════ -->
+<div>
+<div class="phone"><div class="notch"></div><div class="scr"><div class="body">
+
+  <div class="hdr">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">ACTIVITÉ</div>
+      <div class="scr-title">Pas</div>
+    </div>
+  </div>
+
+  <div style="height:18px"></div>
+
+  <!-- giant ring -->
+  <div class="arcwrap" style="width:240px;height:240px;margin:0 auto">
+    <svg width="240" height="240" viewBox="0 0 240 240" style="transform:rotate(-135deg)">
+      <circle cx="120" cy="120" r="106" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2.5"
+        stroke-dasharray="1.6 3.6" pathLength="270" stroke-dashoffset="-90"/>
+      <circle cx="120" cy="120" r="106" fill="none" stroke="#fff" stroke-width="2.5"
+        stroke-dasharray="1.6 3.6" pathLength="270" stroke-dashoffset="-90"
+        style="clip-path:inset(0 28% 0 0)"/>
+    </svg>
+    <div class="arccenter">
+      <div class="num num-xl w" style="font-size:76px">7241</div>
+      <div class="lbl" style="margin-top:10px">/ 10 000 PAS · 72%</div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+  <div style="padding:0 24px">
+    <div class="glyph h10">
+      <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div style="display:flex;padding:0 24px">
+    <div style="flex:1"><div class="num num-md w">312</div><div class="lbl" style="margin-top:8px">KCAL</div></div>
+    <div style="width:1px;background:var(--line-dim);margin:0 18px"></div>
+    <div style="flex:1"><div class="num num-md w">5.1</div><div class="lbl" style="margin-top:8px">KM</div></div>
+    <div style="width:1px;background:var(--line-dim);margin:0 18px"></div>
+    <div style="flex:1"><div class="num num-md w">62</div><div class="lbl" style="margin-top:8px">ÉTAGES</div></div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+  <div class="section-head" style="margin-top:22px"><span class="lbl">7 JOURS</span><span class="lbl">MOY 8.9K</span></div>
+
+  <!-- bar chart — white bars, one red "today" -->
+  <div style="display:flex;align-items:flex-end;gap:8px;height:88px;padding:0 24px">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:76px;background:#fff"></div><div class="lbl" style="font-size:8px">L</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:48px;background:#3A3A3A"></div><div class="lbl" style="font-size:8px">M</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:68px;background:#fff"></div><div class="lbl" style="font-size:8px">M</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:36px;background:#3A3A3A"></div><div class="lbl" style="font-size:8px">J</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:84px;background:#fff"></div><div class="lbl" style="font-size:8px">V</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:24px;background:#3A3A3A"></div><div class="lbl" style="font-size:8px">S</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:44px;background:var(--red)"></div><div class="lbl" style="font-size:8px;color:var(--red)">AUJ</div></div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+<nav class="nav">
+  <a><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="ndot"></span></a>
+  <a class="on"><svg viewBox="0 0 24 24"><polyline points="5,15 10,9 14,13 19,7"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><path d="M12 9 L12 16 M12 11 L7 14 M12 11 L17 14 M12 16 L8 21 M12 16 L16 21"/></svg><span class="ndot"></span></a>
+</nav>
+</div></div>
+<div class="cap">04 — Pas</div>
+</div>
+
+<!-- ══════════════ 05 · CORPS ══════════════ -->
+<div>
+<div class="phone"><div class="notch"></div><div class="scr"><div class="body">
+
+  <div class="hdr">
+    <div>
+      <div class="lbl" style="margin-bottom:8px">RELEVÉ · 03 JUIN</div>
+      <div class="scr-title">Corps</div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:8px;padding:8px 11px">
+      <div class="lbl" style="font-size:8px">IMPORT</div>
+    </div>
+  </div>
+
+  <div style="height:30px"></div>
+
+  <!-- hero weight -->
+  <div style="padding:0 24px">
+    <div class="lbl" style="margin-bottom:10px">POIDS</div>
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <div class="num num-xl w">82.4</div>
+      <div class="unit" style="font-size:15px">KG</div>
+      <div style="flex:1"></div>
+      <div class="num num-sm g1" style="font-size:14px">− 0.8</div>
+    </div>
+  </div>
+
+  <div style="height:26px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+  <div style="height:26px"></div>
+
+  <!-- fat + muscle dual arcs, white -->
+  <div style="display:flex;justify-content:space-around;padding:0 24px">
+    <div style="text-align:center">
+      <div class="arcwrap" style="width:96px;height:96px;margin:0 auto">
+        <svg width="96" height="96" viewBox="0 0 96 96" style="transform:rotate(-135deg)">
+          <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2" stroke-dasharray="1.4 3" pathLength="270" stroke-dashoffset="-90"/>
+          <circle cx="48" cy="48" r="40" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="1.4 3" pathLength="270" stroke-dashoffset="-90" style="clip-path:inset(0 33% 0 0)"/>
+        </svg>
+        <div class="arccenter"><div class="num num-sm w">18<span class="unit">%</span></div></div>
+      </div>
+      <div class="lbl" style="margin-top:10px">GRAISSE</div>
+      <div class="num" style="font-family:var(--mono);font-size:11px;color:var(--g1);margin-top:4px">14.8 kg</div>
+    </div>
+    <div style="width:1px;background:var(--line-dim)"></div>
+    <div style="text-align:center">
+      <div class="arcwrap" style="width:96px;height:96px;margin:0 auto">
+        <svg width="96" height="96" viewBox="0 0 96 96" style="transform:rotate(-135deg)">
+          <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2" stroke-dasharray="1.4 3" pathLength="270" stroke-dashoffset="-90"/>
+          <circle cx="48" cy="48" r="40" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="1.4 3" pathLength="270" stroke-dashoffset="-90" style="clip-path:inset(0 4% 0 0)"/>
+        </svg>
+        <div class="arccenter"><div class="num num-sm w">48<span class="unit">%</span></div></div>
+      </div>
+      <div class="lbl" style="margin-top:10px">MUSCLE</div>
+      <div class="num" style="font-family:var(--mono);font-size:11px;color:var(--g1);margin-top:4px">40.1 kg</div>
+    </div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule-solid" style="margin:0 24px"></div>
+  <div style="height:22px"></div>
+
+  <!-- mensurations -->
+  <div style="display:flex;padding:0 24px">
+    <div style="flex:1"><div class="num num-sm w">82<span class="unit">cm</span></div><div class="lbl" style="margin-top:6px">TAILLE</div></div>
+    <div style="flex:1"><div class="num num-sm w">96<span class="unit">cm</span></div><div class="lbl" style="margin-top:6px">POITRINE</div></div>
+    <div style="flex:1"><div class="num num-sm w">36<span class="unit">cm</span></div><div class="lbl" style="margin-top:6px">BRAS</div></div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="rule" style="margin:0 24px"></div>
+  <div class="section-head" style="margin-top:22px"><span class="lbl">30 JOURS</span><span class="lbl">84.1 → 82.4</span></div>
+
+  <!-- weight trend — minimal line via bars -->
+  <div style="display:flex;align-items:flex-end;gap:5px;height:64px;padding:0 24px">
+    <div style="flex:1;height:60px;background:#222"></div>
+    <div style="flex:1;height:56px;background:#222"></div>
+    <div style="flex:1;height:52px;background:#222"></div>
+    <div style="flex:1;height:48px;background:#222"></div>
+    <div style="flex:1;height:44px;background:#222"></div>
+    <div style="flex:1;height:38px;background:#444"></div>
+    <div style="flex:1;height:34px;background:#666"></div>
+    <div style="flex:1;height:30px;background:#fff"></div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+<div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<nav class="nav">
+  <a><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span class="ndot"></span></a>
+  <a><svg viewBox="0 0 24 24"><polyline points="5,15 10,9 14,13 19,7"/></svg><span class="ndot"></span></a>
+  <a class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.5"/><path d="M12 9 L12 16 M12 11 L7 14 M12 11 L17 14 M12 16 L8 21 M12 16 L16 21"/></svg><span class="ndot"></span></a>
+</nav>
+</div></div>
+<div class="cap">05 — Corps</div>
+</div>
+
+</div><!-- screens -->
+
+
+<!-- ══════════════ DOCUMENTATION ══════════════ -->
+<div class="doc">
+  <div class="doc-h">Système · Spécifications</div>
+  <div class="doc-grid">
+
+    <div class="doc-cell">
+      <div class="doc-tag">Fondations</div>
+      <div class="doc-title">Couleur</div>
+      <p style="margin-bottom:14px">La couleur n'est plus un code de catégorie. Tout est blanc/gris sur noir. Le rouge Nothing est le seul accent — il apparaît ≤ 3× dans toute l'app (série, marqueur « aujourd'hui »).</p>
+      <div class="kv"><span class="k">black</span><span class="v"><span class="sw" style="background:#000;border:1px solid #333"></span>#000000</span></div>
+      <div class="kv"><span class="k">white</span><span class="v"><span class="sw" style="background:#fff"></span>#FFFFFF</span></div>
+      <div class="kv"><span class="k">grey-1</span><span class="v"><span class="sw" style="background:#9A9A9A"></span>#9A9A9A</span></div>
+      <div class="kv"><span class="k">grey-2</span><span class="v"><span class="sw" style="background:#5A5A5A"></span>#5A5A5A</span></div>
+      <div class="kv"><span class="k">line</span><span class="v">white @ 11%</span></div>
+      <div class="kv"><span class="k">red</span><span class="v"><span class="sw" style="background:#D71921"></span>#D71921</span></div>
+    </div>
+
+    <div class="doc-cell">
+      <div class="doc-tag">Typographie</div>
+      <div class="doc-title">Doto + Space Mono</div>
+      <p style="margin-bottom:16px">Tous les chiffres en <b style="color:#fff">Doto</b> (dot-matrix, substitut NDot). Tous les labels en Space Mono, UPPERCASE, tracking 0.32em.</p>
+      <div class="num num-md w" style="margin-bottom:4px">7241</div>
+      <div class="lbl" style="margin-bottom:16px">DOTO 600 · CHIFFRES</div>
+      <div class="rule-solid" style="margin-bottom:16px"></div>
+      <div class="lbl" style="font-size:11px;margin-bottom:4px">PETIT-DÉJEUNER · 08:30</div>
+      <div class="lbl" style="color:#5A5A5A">SPACE MONO · LABELS</div>
+    </div>
+
+    <div class="doc-cell">
+      <div class="doc-tag">Composant</div>
+      <div class="doc-title">Arc segmenté</div>
+      <p style="margin-bottom:16px">Points discrets, jamais un trait lisse. Stroke blanc, track à 10%, ouverture 270° depuis le bas-gauche.</p>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.9;color:#9A9A9A;background:#0A0A0A;padding:14px;border-radius:6px">
+        stroke-dasharray: <span class="w">1.4 3.2</span><br>
+        pathLength: <span class="w">270</span><br>
+        stroke-dashoffset: <span class="w">-90</span><br>
+        stroke-linecap: <span class="w">butt</span><br>
+        progress: clip-path inset
+      </div>
+    </div>
+
+    <div class="doc-cell">
+      <div class="doc-tag">Composant</div>
+      <div class="doc-title">GlyphBar · 3 tailles</div>
+      <div class="lbl" style="margin-bottom:8px">H10 · HERO</div>
+      <div class="glyph h10" style="margin-bottom:18px"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+      <div class="lbl" style="margin-bottom:8px">H6 · DATA</div>
+      <div class="glyph h6" style="margin-bottom:18px"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="lbl" style="margin-bottom:8px">H3 · INLINE</div>
+      <div class="glyph h3"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+
+    <div class="doc-cell">
+      <div class="doc-tag">Architecture</div>
+      <div class="doc-title">Pas de cards</div>
+      <p>Le contenu respire sur le noir, séparé par des <b style="color:#fff">filets pointillés</b> et de l'espace — pas par des boîtes arrondies. Une grille verticale unique à 24px de marge. La hiérarchie vient de la <b style="color:#fff">taille du chiffre</b> (84 → 54 → 34 → 22), pas de la décoration.</p>
+    </div>
+
+    <div class="doc-cell">
+      <div class="doc-tag">Iconographie</div>
+      <div class="doc-title">Zéro emoji</div>
+      <p style="margin-bottom:14px">Icônes en trait monochrome 1.4px, jamais d'emoji. Les repas sont identifiés par leur <b style="color:#fff">heure</b> (08:30), pas par un pictogramme.</p>
+      <div style="display:flex;gap:18px;margin-top:6px">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="9" y1="8" x2="9" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/></svg>
+        <svg class="ic" viewBox="0 0 24 24"><polyline points="4,17 9,11 13,14 20,6"/><polyline points="15,6 20,6 20,11"/></svg>
+        <svg class="ic" viewBox="0 0 24 24"><polygon points="13,2 4,14 11,14 10,22 20,9 13,9"/></svg>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 8 V4 H8 M16 4 H20 V8 M20 16 V20 H16 M8 20 H4 V16"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LAWS -->
+<div class="doc" style="margin-top:48px">
+  <div class="doc-h">Les 8 lois</div>
+  <div class="doc-grid" style="grid-template-columns:1fr 1fr">
+    <div class="doc-cell">
+      <div class="law"><span class="n">1</span><div><b>Noir #000000 strict.</b> Aucune tinte, aucun dégradé sur les surfaces.</div></div>
+      <div class="law"><span class="n">2</span><div><b>Mono d'abord.</b> Blanc = donnée active. Gris = hiérarchie. La couleur n'est pas un code.</div></div>
+      <div class="law"><span class="n">3</span><div><b>Un seul accent.</b> Rouge Nothing, ≤ 3× dans toute l'app, sur le statut le plus singulier.</div></div>
+      <div class="law"><span class="n">4</span><div><b>Doto pour tout chiffre.</b> Dot-matrix, tabular-nums, sans exception.</div></div>
+    </div>
+    <div class="doc-cell">
+      <div class="law"><span class="n">5</span><div><b>Pas de cards.</b> Filets pointillés + espace. La boîte arrondie est le tell n°1 du slop.</div></div>
+      <div class="law"><span class="n">6</span><div><b>Zéro emoji.</b> Icônes trait 1.4px. Repas = heure, pas pictogramme.</div></div>
+      <div class="law"><span class="n">7</span><div><b>Arcs segmentés.</b> dasharray discret, jamais lisse, jamais arrondi.</div></div>
+      <div class="law"><span class="n">8</span><div><b>Zéro ombre / glow / gradient.</b> La forme vient de la bordure et du vide.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div class="cmp">
+  <div class="col">
+    <h4 class="bad">AVANT · SLOP</h4>
+    <div class="li"><span class="m">×</span>Emoji partout (🏋️🥣🍌) — tell n°1</div>
+    <div class="li"><span class="m">×</span>5 couleurs codant chaque catégorie</div>
+    <div class="li"><span class="m">×</span>Tout dans des cards arrondies</div>
+    <div class="li"><span class="m">×</span>Gradients + glow sur les arcs</div>
+    <div class="li"><span class="m">×</span>Space Mono "presque" dot-matrix</div>
+    <div class="li"><span class="m">×</span>Fond bleuté #0A0A14</div>
+  </div>
+  <div class="col">
+    <h4 class="good">APRÈS · NOTHING</h4>
+    <div class="li"><span class="m">•</span>Icônes trait monochrome, repas = heure</div>
+    <div class="li"><span class="m">•</span>Mono blanc/gris, rouge ≤ 3× total</div>
+    <div class="li"><span class="m">•</span>Filets pointillés + vide, zéro card</div>
+    <div class="li"><span class="m">•</span>Arcs segmentés blancs, plats</div>
+    <div class="li"><span class="m">•</span>Doto — vrai dot-matrix (NDot)</div>
+    <div class="li"><span class="m">•</span>Noir #000000 strict</div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:56px;padding-bottom:24px">
+  <div class="lbl" style="font-size:8px;color:#2E2E2E">GYMCOMPANION · NOTHING OS · V3</div>
+</div>
+
+</body>
+</html>

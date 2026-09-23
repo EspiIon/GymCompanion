@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymCompanion — Design Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#070707;
+  --line:rgba(255,255,255,0.11);--line-dim:rgba(255,255,255,0.055);--dot-off:rgba(255,255,255,0.10);
+  --white:#fff;--g1:#9A9A9A;--g2:#5A5A5A;--g3:#2E2E2E;
+  --red:#D71921;        /* status / alert / streak */
+  --yellow:#E1FF00;     /* INTELLIGENCE — AI only */
+  --mono:'Space Mono',monospace;--dot:'Doto',monospace;--body:'Inter',system-ui,sans-serif;
+  --num:var(--dot);     /* swapped by toggle */
+  --bg:#040404;--surf:#000;--ink-c:#fff;--ln:var(--line);
+}
+/* LIGHT MODE (Nothing white) */
+body.light{
+  --bg:#E9E9E9;--surf:#F4F4F4;--ink-c:#000;
+  --white:#000;--g1:#666;--g2:#999;--g3:#CFCFCF;
+  --line:rgba(0,0,0,0.13);--line-dim:rgba(0,0,0,0.07);--dot-off:rgba(0,0,0,0.10);
+  --yellow:#B8A800; /* yellow needs to darken on light bg */
+}
+body.nodot{--num:var(--mono)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink-c);font-family:var(--body);padding:40px 24px 96px;transition:background .25s}
+
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.45em;color:var(--g2);text-transform:uppercase;text-align:center;margin-bottom:10px}
+.title{font-family:var(--num);font-weight:700;font-size:46px;letter-spacing:.04em;text-align:center;margin-bottom:8px;color:var(--ink-c)}
+.sub{font-family:var(--mono);font-size:11px;color:var(--g2);text-align:center;letter-spacing:.1em;margin-bottom:36px}
+
+/* control bar */
+.controls{display:flex;gap:10px;justify-content:center;margin-bottom:56px;flex-wrap:wrap}
+.ctrl{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 16px;background:var(--surf);cursor:pointer;user-select:none}
+.ctrl .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--g2)}
+.ctrl .val{font-family:var(--num);font-weight:600;font-size:15px;color:var(--ink-c)}
+.ctrl .val.on{color:var(--yellow)}
+
+.lbl{font-family:var(--mono);font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--g2)}
+.num{font-family:var(--num);font-weight:600;line-height:.92;letter-spacing:.02em;font-variant-numeric:tabular-nums;color:var(--ink-c)}
+.red{color:var(--red)}.yellow{color:var(--yellow)}.g1{color:var(--g1)}
+.unit{font-family:var(--mono);font-size:11px;color:var(--g2)}
+
+.sec{max-width:1080px;margin:0 auto 64px}
+.sec-h{font-family:var(--mono);font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--g2);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--line-dim)}
+.cell{background:var(--surf);padding:24px}
+.cell .tag{font-family:var(--mono);font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--g2);margin-bottom:8px}
+.cell .ct{font-family:var(--num);font-weight:600;font-size:17px;letter-spacing:.03em;margin-bottom:14px;color:var(--ink-c)}
+.cell p{font-size:12px;color:var(--g1);line-height:1.7}
+
+.rule{height:1px;background-image:radial-gradient(circle,var(--line) 1px,transparent 1px);background-size:5px 1px;background-repeat:repeat-x}
+.rule-s{height:1px;background:var(--line-dim)}
+
+.glyph{display:flex;gap:3px}
+.glyph i{flex:1;background:var(--dot-off);border-radius:1px}
+.glyph.h10 i{height:10px}.glyph.h6 i{height:6px}.glyph.h3 i{height:3px}
+.glyph i.on{background:var(--ink-c)}.glyph i.red{background:var(--red)}.glyph i.yl{background:var(--yellow)}
+
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block}
+.ydot{width:6px;height:6px;border-radius:50%;background:var(--yellow);display:inline-block}
+
+.kv{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line-dim);font-family:var(--mono);font-size:11px}
+.kv:last-child{border:0}.kv .k{color:var(--g2)}.kv .v{color:var(--ink-c)}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;vertical-align:middle}
+
+.ic{stroke:var(--g1);fill:none;stroke-width:1.4}
+
+/* phone preview small */
+.mini{width:300px;border:1px solid var(--line);border-radius:24px;background:var(--surf);padding:20px;margin:0 auto}
+
+/* AI insight bar */
+.ai{border:1px solid var(--yellow);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;background:var(--surf)}
+.ai .ph{font-family:var(--mono);font-size:8px;letter-spacing:.25em;color:var(--yellow);text-transform:uppercase;margin-bottom:5px}
+.ai .tx{font-size:13px;color:var(--ink-c);line-height:1.5}
+.ai .tx b{color:var(--yellow)}
+
+/* idea list */
+.ideas{max-width:1080px;margin:0 auto}
+.idea{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line-dim)}
+.idea .no{font-family:var(--num);font-weight:700;font-size:20px;color:var(--g2);width:34px;flex-shrink:0}
+.idea .bd h5{font-size:14px;font-weight:600;color:var(--ink-c);margin-bottom:4px}
+.idea .bd p{font-size:12px;color:var(--g1);line-height:1.6}
+.idea .bd .risk{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--g2);margin-top:5px;text-transform:uppercase}
+.idea .tag2{font-family:var(--mono);font-size:8px;letter-spacing:.2em;padding:3px 8px;border:1px solid var(--line);border-radius:4px;color:var(--g2);text-transform:uppercase;align-self:flex-start;flex-shrink:0}
+.idea .tag2.ai{color:var(--yellow);border-color:var(--yellow)}
+.idea .tag2.mo{color:var(--ink-c)}
+</style>
+</head>
+<body class="">
+
+<div class="kicker">GymCompanion · Design Lab</div>
+<div class="title">SYSTÈME / v3.1</div>
+<div class="sub">TOGGLE LA POLICE & LE THÈME EN HAUT ↓</div>
+
+<!-- LIVE CONTROLS -->
+<div class="controls">
+  <div class="ctrl" onclick="toggleDot(this)">
+    <span class="lbl">Police chiffres</span>
+    <span class="val on" id="dotVal">DOT-MATRIX</span>
+  </div>
+  <div class="ctrl" onclick="toggleTheme(this)">
+    <span class="lbl">Thème</span>
+    <span class="val" id="thVal">SOMBRE</span>
+  </div>
+</div>
+
+<!-- ── A · FONT TOGGLE DEMO ── -->
+<div class="sec">
+  <div class="sec-h">A · Police commutable</div>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="cell" style="text-align:center;padding:36px 24px">
+      <div class="num" style="font-size:80px">7241</div>
+      <div class="lbl" style="margin-top:16px">CHIFFRE HERO · LIVE</div>
+      <p style="margin-top:10px">Bascule le bouton « Police chiffres » : tous les nombres ci-dessus changent en direct. C'est un seul réglage global.</p>
+    </div>
+    <div class="cell">
+      <div class="tag">Réglage</div>
+      <div class="ct">Dot-matrix · ON / OFF</div>
+      <p style="margin-bottom:16px">Un interrupteur dans Réglages. <b style="color:var(--ink-c)">ON</b> = Doto (NDot). <b style="color:var(--ink-c)">OFF</b> = Space Mono, plus lisible pour qui n'aime pas les points ou pour l'accessibilité.</p>
+      <div class="kv"><span class="k">ON · Doto</span><span class="v" style="font-family:var(--dot)">123.4 KG</span></div>
+      <div class="kv"><span class="k">OFF · Space Mono</span><span class="v" style="font-family:var(--mono)">123.4 KG</span></div>
+      <p style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--g2);line-height:1.7">CompositionLocal&lt;FontFamily&gt;<br>+ DataStore bool · 0 refactor des écrans</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── B · COLOR SYSTEM w/ YELLOW ── -->
+<div class="sec">
+  <div class="sec-h">B · Couleur — discipline d'accent</div>
+  <div class="grid">
+    <div class="cell">
+      <div class="tag">Principe</div>
+      <div class="ct">1 accent = 1 rôle</div>
+      <p>La couleur ne décore jamais. Chaque accent a un seul métier. Si une couleur n'a pas de sens sémantique précis, elle n'existe pas.</p>
+    </div>
+    <div class="cell">
+      <div class="tag">Palette</div>
+      <div class="ct">4 valeurs</div>
+      <div class="kv"><span class="k"><span class="sw" style="background:#fff;border:1px solid #444"></span>BLANC</span><span class="v">Donnée active</span></div>
+      <div class="kv"><span class="k"><span class="sw" style="background:#5A5A5A"></span>GRIS</span><span class="v">Hiérarchie</span></div>
+      <div class="kv"><span class="k"><span class="sw" style="background:#D71921"></span>ROUGE</span><span class="v">Statut · série · alerte</span></div>
+      <div class="kv"><span class="k"><span class="sw" style="background:#E1FF00"></span>JAUNE</span><span class="v">Intelligence · IA</span></div>
+    </div>
+    <div class="cell">
+      <div class="tag">Rouge</div>
+      <div class="ct red">Statut</div>
+      <p style="margin-bottom:12px">Série, marqueur « aujourd'hui », dépassement d'objectif. ≤ 3 occurrences/écran.</p>
+      <div style="display:flex;align-items:center;gap:8px"><span class="sdot"></span><span class="num red" style="font-size:24px">14</span><span class="lbl">JOURS</span></div>
+    </div>
+    <div class="cell">
+      <div class="tag">Jaune Nothing</div>
+      <div class="ct yellow">Intelligence</div>
+      <p style="margin-bottom:12px">Uniquement l'IA : analyses, suggestions, remplissage auto du scan. Jamais une donnée « normale ».</p>
+      <div style="display:flex;align-items:center;gap:8px"><span class="ydot"></span><span class="lbl yellow" style="color:var(--yellow)">AI · INSIGHT</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── C · AI / YELLOW PATTERNS ── -->
+<div class="sec">
+  <div class="sec-h">C · Surfaces intelligentes (jaune)</div>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="cell">
+      <div class="tag">Coach IA</div>
+      <div class="ct">Insight du jour</div>
+      <div class="ai" style="margin-top:6px">
+        <span class="ydot" style="margin-top:4px"></span>
+        <div>
+          <div class="ph">INTELLIGENCE</div>
+          <div class="tx">Il te reste <b>26 g de protéines</b> pour ton objectif. Un yaourt grec + 30 g d'amandes suffisent.</div>
+        </div>
+      </div>
+      <p style="margin-top:14px">Une ligne, générée à partir des données du jour. Bordure jaune = « ceci vient de l'IA ».</p>
+    </div>
+    <div class="cell">
+      <div class="tag">Scan</div>
+      <div class="ct">Remplissage auto</div>
+      <div style="border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;font-weight:500;color:var(--ink-c)">Skyr vanille</span>
+          <span class="lbl yellow" style="color:var(--yellow);display:flex;align-items:center;gap:5px"><span class="ydot"></span>AUTO</span>
+        </div>
+        <div class="rule-s" style="margin:12px 0"></div>
+        <div style="display:flex;gap:18px">
+          <div><div class="num" style="font-size:22px">95</div><div class="lbl" style="margin-top:4px">KCAL</div></div>
+          <div><div class="num" style="font-size:22px">10</div><div class="lbl" style="margin-top:4px">PROT</div></div>
+          <div><div class="num" style="font-size:22px">12</div><div class="lbl" style="margin-top:4px">GLUC</div></div>
+        </div>
+      </div>
+      <p style="margin-top:14px">Le tag jaune « AUTO » signale les valeurs récupérées par OpenFoodFacts via le scan.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── D · NEW PATTERNS ── -->
+<div class="sec">
+  <div class="sec-h">D · Nouveaux motifs proposés</div>
+  <div class="grid">
+
+    <!-- dot-grid hero -->
+    <div class="cell" style="background-image:radial-gradient(var(--line-dim) 1px,transparent 1px);background-size:9px 9px;background-color:var(--surf)">
+      <div class="tag">Texture</div>
+      <div class="ct">Fond grille de points</div>
+      <div class="num" style="font-size:48px;margin:8px 0">653</div>
+      <div class="lbl">RESTANTES · KCAL</div>
+      <p style="margin-top:14px">Une grille de points très discrète (5% d'opacité) sur les zones hero. Rappel matériel des LED Glyph, sans bruit.</p>
+    </div>
+
+    <!-- glyph celebration -->
+    <div class="cell">
+      <div class="tag">Feedback</div>
+      <div class="ct">Célébration série</div>
+      <div class="glyph h10" style="margin:14px 0 8px">
+        <i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i><i class="red"></i>
+      </div>
+      <div class="lbl">PALIER 14 JOURS ATTEINT</div>
+      <p style="margin-top:14px">Aux paliers (7/14/30…), les segments s'illuminent en séquence comme l'interface Glyph du téléphone. Court, mécanique, satisfaisant.</p>
+    </div>
+
+    <!-- receipt -->
+    <div class="cell">
+      <div class="tag">Vue</div>
+      <div class="ct">Récap « ticket »</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--g1);line-height:1.9;margin-top:6px">
+        <div style="display:flex;justify-content:space-between"><span>PETIT-DÉJ</span><span class="num" style="font-size:11px">487</span></div>
+        <div style="display:flex;justify-content:space-between"><span>DÉJEUNER</span><span class="num" style="font-size:11px">724</span></div>
+        <div style="display:flex;justify-content:space-between"><span>DÎNER</span><span class="num" style="font-size:11px">636</span></div>
+        <div class="rule" style="margin:8px 0"></div>
+        <div style="display:flex;justify-content:space-between;color:var(--ink-c)"><span>TOTAL</span><span class="num" style="font-size:13px">1847</span></div>
+      </div>
+      <p style="margin-top:14px">Le bilan du jour en imprimante matricielle. Très Nothing, très lisible.</p>
+    </div>
+
+    <!-- counter tick -->
+    <div class="cell">
+      <div class="tag">Motion</div>
+      <div class="ct">Compteur qui défile</div>
+      <div class="num" style="font-size:48px;margin:8px 0">7241</div>
+      <p style="margin-top:6px">Les chiffres « tickent » de 0 → valeur au chargement (200–400 ms, ease-out). En dot-matrix l'effet est mécanique, comme un afficheur.</p>
+    </div>
+
+    <!-- light mode -->
+    <div class="cell">
+      <div class="tag">Mode</div>
+      <div class="ct">Thème clair Nothing</div>
+      <p style="margin-bottom:12px">Inversé : fond gris clair, encre noire, mêmes accents. Bascule le bouton « Thème » en haut pour voir toute la page passer en clair.</p>
+      <div class="kv"><span class="k">Fond</span><span class="v">#E9E9E9</span></div>
+      <div class="kv"><span class="k">Encre</span><span class="v">#000000</span></div>
+      <div class="kv"><span class="k">Jaune</span><span class="v">assombri</span></div>
+    </div>
+
+    <!-- widget -->
+    <div class="cell">
+      <div class="tag">Android</div>
+      <div class="ct">Widget écran d'accueil</div>
+      <div class="mini" style="width:auto;padding:16px;margin-top:6px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="num" style="font-size:34px">7241</div><div class="lbl" style="margin-top:4px">PAS</div></div>
+          <div style="text-align:right"><div class="num" style="font-size:34px">1847</div><div class="lbl" style="margin-top:4px">KCAL</div></div>
+        </div>
+        <div class="glyph h3" style="margin-top:12px"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+      </div>
+      <p style="margin-top:14px">Widget monochrome glanceable — signature Nothing. Calories + pas + glyph bar.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── E · BRAINSTORM FULL LIST ── -->
+<div class="sec ideas">
+  <div class="sec-h">E · Brainstorm — toutes les pistes</div>
+
+  <div class="idea"><div class="no">01</div><div class="bd"><h5>Police dot commutable</h5><p>Toggle global Doto ↔ Space Mono dans Réglages, persisté.</p><div class="risk">Effort : faible · Impact : fort</div></div><span class="tag2 mo">CORE</span></div>
+
+  <div class="idea"><div class="no">02</div><div class="bd"><h5>Jaune = intelligence</h5><p>Coach IA quotidien, tag « AUTO » sur le scan, suggestions. Le jaune ne touche que l'IA.</p><div class="risk">Effort : moyen · Impact : fort</div></div><span class="tag2 ai">IA</span></div>
+
+  <div class="idea"><div class="no">03</div><div class="bd"><h5>Célébration Glyph</h5><p>Animation LED séquentielle aux paliers de série (7/14/30) et objectifs atteints.</p><div class="risk">Effort : moyen · Impact : fort</div></div><span class="tag2 mo">MOTION</span></div>
+
+  <div class="idea"><div class="no">04</div><div class="bd"><h5>Compteurs qui défilent</h5><p>Tous les chiffres tickent de 0 → valeur au chargement. Effet afficheur matriciel.</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 mo">MOTION</span></div>
+
+  <div class="idea"><div class="no">05</div><div class="bd"><h5>Fond grille de points</h5><p>Texture LED 5% sur les zones hero. Profondeur sans bruit ni gradient.</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 mo">VISUEL</span></div>
+
+  <div class="idea"><div class="no">06</div><div class="bd"><h5>Thème clair Nothing</h5><p>Mode blanc inversé, mêmes accents. Auto selon l'heure ou manuel.</p><div class="risk">Effort : moyen · Impact : moyen</div></div><span class="tag2 mo">MODE</span></div>
+
+  <div class="idea"><div class="no">07</div><div class="bd"><h5>Widget écran d'accueil</h5><p>Glance monochrome calories + pas + glyph. Argument d'installation fort.</p><div class="risk">Effort : élevé · Impact : fort</div></div><span class="tag2 mo">ANDROID</span></div>
+
+  <div class="idea"><div class="no">08</div><div class="bd"><h5>Récap « ticket »</h5><p>Bilan du jour en imprimante matricielle, partageable en image.</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 mo">VISUEL</span></div>
+
+  <div class="idea"><div class="no">09</div><div class="bd"><h5>Arcs qui s'allument segment par segment</h5><p>Au lieu d'un balayage lisse, les points de l'arc s'illuminent en cascade.</p><div class="risk">Effort : moyen · Impact : moyen</div></div><span class="tag2 mo">MOTION</span></div>
+
+  <div class="idea"><div class="no">10</div><div class="bd"><h5>Scan : viseur à coins matriciels</h5><p>Cadre de scan avec coins en points + barre jaune « IA analyse… » pendant la reconnaissance.</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 ai">IA</span></div>
+
+  <div class="idea"><div class="no">11</div><div class="bd"><h5>Haptique & son signature</h5><p>Micro-vibration sur log, à la validation d'objectif. Identité tactile Nothing.</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 mo">POLISH</span></div>
+
+  <div class="idea"><div class="no">12</div><div class="bd"><h5>États vides en ASCII / dot-art</h5><p>Pas d'illustration colorée : un glyph matriciel + une ligne mono. « AUCUNE DONNÉE ».</p><div class="risk">Effort : faible · Impact : moyen</div></div><span class="tag2 mo">VISUEL</span></div>
+
+  <div class="idea"><div class="no">13</div><div class="bd"><h5>Pull-to-refresh Glyph</h5><p>Le geste de rafraîchir déclenche une séquence LED au lieu d'un spinner.</p><div class="risk">Effort : moyen · Impact : faible</div></div><span class="tag2 mo">MOTION</span></div>
+
+  <div class="idea"><div class="no">14</div><div class="bd"><h5>Densité réglable</h5><p>Compact / Confortable — pour qui veut plus de données à l'écran.</p><div class="risk">Effort : moyen · Impact : faible</div></div><span class="tag2 mo">CORE</span></div>
+</div>
+
+<!-- ── F · PLAN ── -->
+<div class="sec">
+  <div class="sec-h">F · Plan d'exécution — 3 phases</div>
+  <div class="grid">
+    <div class="cell">
+      <div class="tag">Phase 1 · Socle</div>
+      <div class="ct">Le système v3</div>
+      <p style="line-height:1.9">→ Theme.kt : purge des accents, ajout rouge + jaune<br>→ Type.kt : Doto + Space Mono via Downloadable Fonts<br>→ <b style="color:var(--ink-c)">LocalNumericFont</b> + toggle dot (DataStore)<br>→ Components.kt : suppression cards → filets, icônes SVG, GlyphBar H10/6/3, arc segmenté<br>→ Réécriture des 5 écrans</p>
+    </div>
+    <div class="cell">
+      <div class="tag">Phase 2 · Intelligence</div>
+      <div class="ct">Jaune & motion</div>
+      <p style="line-height:1.9">→ Coach IA (insight du jour, règles locales)<br>→ Tag « AUTO » jaune sur le scan<br>→ Compteurs qui défilent<br>→ Célébration Glyph aux paliers<br>→ Fond grille de points sur hero</p>
+    </div>
+    <div class="cell">
+      <div class="tag">Phase 3 · Extension</div>
+      <div class="ct">Confort & plateforme</div>
+      <p style="line-height:1.9">→ Écran Réglages (toggle police, thème, densité)<br>→ Thème clair Nothing<br>→ Widget écran d'accueil<br>→ Récap ticket partageable<br>→ Haptique + états vides</p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:40px">
+  <div class="lbl" style="font-size:8px;color:var(--g3)">GYMCOMPANION · DESIGN LAB · V3.1</div>
+</div>
+
+<script>
+function toggleDot(el){
+  document.body.classList.toggle('nodot');
+  var v=document.getElementById('dotVal');
+  var off=document.body.classList.contains('nodot');
+  v.textContent=off?'MONO':'DOT-MATRIX';
+  v.classList.toggle('on',!off);
+}
+function toggleTheme(el){
+  document.body.classList.toggle('light');
+  var v=document.getElementById('thVal');
+  var light=document.body.classList.contains('light');
+  v.textContent=light?'CLAIR':'SOMBRE';
+}
+</script>
+</body>
+</html>

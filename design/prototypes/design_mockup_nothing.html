@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymCompanion — Nothing OS Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   NOTHING OS DESIGN TOKENS
+   ─────────────────────────────────────────────────────────────────
+   Rule 1 : Pure black everywhere. No exceptions on surfaces.
+   Rule 2 : White defines form. Colour defines data.
+   Rule 3 : No gradients. No shadows. No glows.
+   Rule 4 : Monospace for every numeric value.
+   Rule 5 : ALL CAPS + wide tracking for every label.
+═══════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Surfaces (monochrome only) */
+  --black:        #000000;
+  --surface:      #0D0D0D;   /* card lift — 5% white equiv */
+  --surface-hi:   #161616;   /* nested input / pressed */
+  --divider:      rgba(255,255,255,0.06);
+
+  /* ── Borders (white, very low opacity) */
+  --border:       rgba(255,255,255,0.08);   /* resting */
+  --border-focus: rgba(255,255,255,0.20);   /* active / selected */
+
+  /* ── Text (white scale only) */
+  --text-100: #FFFFFF;
+  --text-60:  #999999;
+  --text-30:  #444444;
+
+  /* ── Data accents — applied ONLY to numeric values and icons */
+  --purple:  #7C6FFF;
+  --teal:    #00D4AA;
+  --orange:  #FF8C42;
+  --red:     #FF3B30;
+  --amber:   #FFAA33;
+
+  /* ── Typography */
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* ── Radius — mechanical, not bubbly */
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+
+  /* ── Spacing (8px grid) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+}
+
+/* ── Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #050505;
+  font-family: var(--font-body);
+  color: var(--text-100);
+  min-height: 100vh;
+  padding: 48px 24px 80px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE SHELL
+══════════════════════════════════════════════════════════ */
+.page-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--text-60);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.page-heading {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.page-heading span { color: var(--text-60); font-weight: 400; }
+
+/* ── Screens grid */
+.screens {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* ── Phone frame */
+.phone {
+  width: 360px;
+  border-radius: 44px;
+  background: var(--black);
+  border: 1.5px solid rgba(255,255,255,0.10);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 7px #0A0A0A,
+    0 0 0 8.5px rgba(255,255,255,0.04),
+    0 48px 96px rgba(0,0,0,0.9);
+  flex-shrink: 0;
+}
+.phone-notch {
+  width: 100px;
+  height: 26px;
+  background: #000;
+  border-radius: 0 0 14px 14px;
+  margin: 0 auto;
+}
+.phone-screen {
+  height: 760px;
+  overflow: hidden;
+  position: relative;
+  background: var(--black);
+}
+.screen-body {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-bottom: 72px;
+  scrollbar-width: none;
+}
+.screen-body::-webkit-scrollbar { display: none; }
+.screen-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-30);
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTHING OS COMPONENTS
+══════════════════════════════════════════════════════════ */
+
+/* ── NothingCard */
+.n-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+
+/* ── Section label */
+.n-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--text-60);
+}
+
+/* ── Numeric display (dot-matrix feel via Space Mono) */
+.n-display-xl {
+  font-family: var(--font-mono);
+  font-size: 72px;
+  font-weight: 700;
+  line-height: .9;
+  letter-spacing: -3px;
+}
+.n-display-lg {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: .95;
+  letter-spacing: -2px;
+}
+.n-display-md {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.n-display-sm {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+.n-unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-30);
+  margin-left: 2px;
+  letter-spacing: 0;
+}
+
+/* ── Colour aliases */
+.c-purple { color: var(--purple); }
+.c-teal   { color: var(--teal); }
+.c-orange { color: var(--orange); }
+.c-red    { color: var(--red); }
+.c-amber  { color: var(--amber); }
+.c-60     { color: var(--text-60); }
+.c-30     { color: var(--text-30); }
+
+/* ── GlyphBar — discrete LED segments, PRIMARY visual motif */
+.glyph-bar {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+}
+.glyph-seg {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--divider);
+  transition: background .15s;
+}
+/* Heights */
+.glyph-bar.h-12 .glyph-seg { height: 12px; }
+.glyph-bar.h-8  .glyph-seg { height: 8px; }
+.glyph-bar.h-5  .glyph-seg { height: 5px; }
+.glyph-bar.h-3  .glyph-seg { height: 3px; }
+/* Active tint — set inline with data-color */
+.glyph-bar.h-12 .glyph-seg.on { background: var(--seg-color, #fff); }
+.glyph-bar.h-8  .glyph-seg.on { background: var(--seg-color, #fff); }
+.glyph-bar.h-5  .glyph-seg.on { background: var(--seg-color, #fff); }
+.glyph-bar.h-3  .glyph-seg.on { background: var(--seg-color, #fff); }
+
+/* ── Segmented arc (SVG-based, dash array = discrete segments) */
+/* Rendered inline per component */
+
+/* ── Divider */
+.n-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: var(--sp-3) 0;
+}
+
+/* ── Pill tag */
+.n-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--text-60);
+  text-transform: uppercase;
+}
+.n-pill.active { border-color: var(--border-focus); color: var(--text-100); }
+
+/* ── Bottom nav */
+.n-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  border-top: 1px solid var(--border);
+  background: var(--black);
+  display: flex;
+  padding: 10px 0 18px;
+}
+.n-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.n-nav-icon {
+  font-size: 18px;
+  opacity: .35;
+  line-height: 1;
+}
+.n-nav-item.active .n-nav-icon { opacity: 1; }
+.n-nav-dot {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: transparent;
+}
+.n-nav-item.active .n-nav-dot { background: var(--purple); }
+
+/* ── FAB */
+.n-fab {
+  position: absolute;
+  bottom: 82px; right: 18px;
+  width: 48px; height: 48px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border-focus);
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-100);
+  cursor: pointer;
+}
+
+/* ── Screen header */
+.n-header {
+  padding: var(--sp-5) var(--sp-5) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.n-screen-title {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.n-screen-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-60);
+  text-transform: uppercase;
+  text-align: right;
+  margin-top: 3px;
+}
+
+/* Glyph decoration bar (header accent) */
+.n-glyph-deco {
+  display: flex;
+  gap: 4px;
+  padding: var(--sp-3) var(--sp-5) 0;
+}
+.n-glyph-deco span {
+  flex: 1;
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--divider);
+}
+.n-glyph-deco span.on { background: var(--border-focus); }
+
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 1 — DASHBOARD
+══════════════════════════════════════════════════════════ */
+
+/* Hero calorie widget */
+.dash-hero {
+  margin: var(--sp-4) var(--sp-5) 0;
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+.dash-hero-row {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: center;
+}
+.dash-hero-arc {
+  flex-shrink: 0;
+  position: relative;
+  width: 112px;
+  height: 112px;
+}
+.dash-hero-arc-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dash-hero-info { flex: 1; }
+
+/* Macro row */
+.macro-row {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: var(--sp-3);
+}
+.macro-item {}
+.macro-item .n-label { margin-bottom: var(--sp-1); }
+.macro-item .n-display-sm { }
+
+/* Half widgets */
+.half-widgets {
+  margin: var(--sp-3) var(--sp-5) 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+.half-widget {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+
+/* Body widget */
+.body-widget {
+  margin: var(--sp-3) var(--sp-5) 0;
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+.body-arcs {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: var(--sp-3);
+}
+.body-arc-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.body-arc-center {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 2 — NUTRITION
+══════════════════════════════════════════════════════════ */
+.nut-hero {
+  padding: var(--sp-4) var(--sp-5) 0;
+}
+.nut-ring-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: var(--sp-3) auto 0;
+}
+.nut-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.meal-block {
+  margin: var(--sp-4) var(--sp-5) 0;
+}
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--sp-2);
+}
+.food-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--divider);
+  gap: var(--sp-3);
+}
+.food-row:last-child { border-bottom: none; }
+.food-name { font-size: 13px; flex: 1; }
+.food-gram { font-family: var(--font-mono); font-size: 10px; color: var(--text-60); }
+.food-kcal { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--purple); }
+
+/* scan button */
+.scan-btn {
+  position: absolute;
+  bottom: 82px; right: 18px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-4);
+  height: 46px;
+  border: 1px solid var(--border-focus);
+  border-radius: var(--r-md);
+  background: var(--black);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-100);
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 3 — WORKOUT
+══════════════════════════════════════════════════════════ */
+.workout-summary {
+  margin: var(--sp-4) var(--sp-5) 0;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: var(--sp-3);
+}
+.summary-cell {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-2);
+  text-align: center;
+}
+.session-row {
+  margin: var(--sp-2) var(--sp-5) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+}
+.session-cat {
+  font-size: 20px;
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.session-info { flex: 1; }
+.session-name { font-size: 13px; font-weight: 600; }
+.session-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-60);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.session-glyph { margin-top: 5px; }
+.session-kcal {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 4 — STEPS
+══════════════════════════════════════════════════════════ */
+.steps-ring-wrap {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  margin: var(--sp-4) auto 0;
+}
+.steps-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.steps-stats {
+  margin: var(--sp-4) var(--sp-5) 0;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: var(--sp-3);
+}
+.stat-cell {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-3);
+  text-align: center;
+}
+.week-chart {
+  margin: var(--sp-4) var(--sp-5) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+.bars-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 72px;
+  margin-bottom: var(--sp-2);
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+}
+.bar-fill {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+  background: var(--surface-hi);
+}
+.bar-fill.goal { background: var(--teal); }
+.bar-fill.today { background: var(--teal); opacity: .55; }
+.bar-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--text-60);
+  text-transform: uppercase;
+}
+.bar-val {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  color: var(--text-60);
+}
+.bar-val.teal { color: var(--teal); }
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 5 — BODY
+══════════════════════════════════════════════════════════ */
+.body-hero-cell {
+  margin: var(--sp-4) var(--sp-5) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+}
+.body-main-weight {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-2);
+}
+.body-comp-arcs {
+  margin-top: var(--sp-4);
+  display: flex;
+  gap: var(--sp-4);
+  align-items: center;
+  justify-content: space-around;
+}
+.comp-arc-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.comp-arc-rel {
+  position: relative;
+  width: 82px;
+  height: 82px;
+}
+.comp-arc-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mensur-row {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: var(--sp-2);
+  text-align: center;
+}
+.body-hist {
+  margin: var(--sp-3) var(--sp-5) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+}
+.hist-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 60px;
+  margin-top: var(--sp-3);
+}
+.hist-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  background: var(--surface);
+}
+.hist-bar.latest { background: var(--teal); }
+
+
+/* ══════════════════════════════════════════════════════════
+   DESIGN SYSTEM DOCUMENTATION
+══════════════════════════════════════════════════════════ */
+.ds-section {
+  max-width: 1100px;
+  margin: 72px auto 0;
+}
+.ds-section-head {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-60);
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--divider);
+}
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.ds-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px;
+}
+.ds-card-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 6px;
+}
+.ds-card-title {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.ds-card p { font-size: 12px; color: var(--text-60); line-height: 1.7; }
+.ds-card ul { font-size: 12px; color: var(--text-60); line-height: 1.9; padding-left: 14px; margin-top: 8px; }
+.ds-card li::marker { color: var(--border-focus); }
+
+/* Token table */
+.token-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.token-table td { padding: 5px 8px; font-family: var(--font-mono); font-size: 11px; border-bottom: 1px solid var(--divider); }
+.token-table tr:last-child td { border-bottom: none; }
+.token-table .t-name { color: var(--text-60); }
+.token-table .t-val { color: var(--text-100); }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+
+/* Component demo strip */
+.demo-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Rule card */
+.rule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--divider);
+  font-size: 12px;
+}
+.rule-row:last-child { border-bottom: none; }
+.rule-icon { font-size: 14px; flex-shrink: 0; }
+.rule-text { color: var(--text-60); line-height: 1.5; }
+.rule-text strong { color: var(--text-100); }
+
+/* Comparison strip */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 24px auto 0;
+}
+.compare-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px;
+}
+.compare-head {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.compare-head.bad  { color: var(--red); }
+.compare-head.good { color: var(--teal); }
+.compare-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-60);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--divider);
+  line-height: 1.5;
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row .icon { flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- ─── PAGE HEADER ──────────────────────────────────────────── -->
+<div class="page-title">GymCompanion · Design System</div>
+<h1 class="page-heading">Nothing OS <span>/ Fitness</span></h1>
+
+<!-- ─── 5 SCREENS ────────────────────────────────────────────── -->
+<div class="screens">
+
+
+<!-- ════════════════════════════
+     SCREEN 1 — DASHBOARD
+════════════════════════════ -->
+<div>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+  <div class="screen-body">
+
+    <!-- Glyph deco bar (streak level = 14 segments) -->
+    <div class="n-glyph-deco" style="padding-top:14px">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Header -->
+    <div class="n-header" style="margin-top:10px">
+      <div>
+        <div class="n-label" style="margin-bottom:3px">Sam 07 Juin</div>
+        <div class="n-screen-title">Dashboard</div>
+      </div>
+      <div style="text-align:right">
+        <div class="n-label" style="margin-bottom:3px">Streak</div>
+        <div style="font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--orange)">
+          14<span style="font-size:11px;color:var(--text-60);font-weight:400"> JOURS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Calorie Widget -->
+    <div class="dash-hero">
+      <div class="n-label" style="margin-bottom:12px">Calories · Aujourd'hui</div>
+      <div class="dash-hero-row">
+
+        <!-- Segmented arc (SVG dashed stroke = Nothing OS look) -->
+        <div class="dash-hero-arc">
+          <svg width="112" height="112" viewBox="0 0 112 112" style="transform:rotate(-135deg)">
+            <!-- track (dashed = segmented) -->
+            <circle cx="56" cy="56" r="46"
+              fill="none"
+              stroke="rgba(124,111,255,0.12)"
+              stroke-width="9"
+              stroke-dasharray="4 4"
+              stroke-dashoffset="0"
+              stroke-linecap="butt"
+              pathLength="360"/>
+            <!-- progress: 74% of 270° sweep -->
+            <circle cx="56" cy="56" r="46"
+              fill="none"
+              stroke="#7C6FFF"
+              stroke-width="9"
+              stroke-dasharray="2 4"
+              stroke-dashoffset="0"
+              stroke-linecap="butt"
+              pathLength="360"
+              style="clip-path:none"
+              stroke-dashoffset="90"/>
+            <!-- mask for 74% -->
+            <circle cx="56" cy="56" r="46"
+              fill="none"
+              stroke="#7C6FFF"
+              stroke-width="9"
+              stroke-dasharray="199.2 288"
+              stroke-dashoffset="72"
+              stroke-linecap="butt"/>
+            <!-- track visible portion -->
+            <circle cx="56" cy="56" r="46"
+              fill="none"
+              stroke="rgba(124,111,255,0.10)"
+              stroke-width="9"
+              stroke-dasharray="270 360"
+              stroke-dashoffset="0"
+              stroke-linecap="butt"
+              pathLength="360"/>
+            <!-- actual segmented arc trick: use strokeDasharray to make segments -->
+            <!-- Redraw properly: segments via clip -->
+          </svg>
+          <!-- Redo arc clean -->
+          <svg width="112" height="112" viewBox="0 0 112 112" style="position:absolute;top:0;left:0;transform:rotate(-135deg)">
+            <!-- 270° track, dashed -->
+            <circle cx="56" cy="56" r="46" fill="none"
+              stroke="rgba(124,111,255,0.10)" stroke-width="8"
+              stroke-dasharray="5.3 2.1"
+              pathLength="270"
+              stroke-dashoffset="-90"/>
+            <!-- 74% progress -->
+            <circle cx="56" cy="56" r="46" fill="none"
+              stroke="#7C6FFF" stroke-width="8"
+              stroke-dasharray="5.3 2.1"
+              pathLength="270"
+              stroke-dashoffset="-90"
+              style="clip-path:inset(0 26% 0 0)"/>
+          </svg>
+          <div class="dash-hero-arc-center">
+            <div class="n-label" style="font-size:8px;margin-bottom:1px">KCAL</div>
+            <div class="n-display-md c-purple" style="font-size:28px">1847</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-60)">/ 2500</div>
+          </div>
+        </div>
+
+        <!-- Info col -->
+        <div class="dash-hero-info">
+          <div class="n-label" style="margin-bottom:4px">Restantes</div>
+          <div class="n-display-lg c-purple" style="font-size:42px;letter-spacing:-2px">653</div>
+          <div class="n-label" style="margin-top:2px">kcal disponibles</div>
+          <div style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span class="n-label" style="font-size:8px">BRÛLÉ</span>
+              <span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--orange)">+320</span>
+            </div>
+            <!-- mini glyph bar (burned) -->
+            <div class="glyph-bar h-3">
+              <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+              <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+              <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+              <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+              <span class="glyph-seg"></span>
+              <span class="glyph-seg"></span>
+              <span class="glyph-seg"></span>
+              <span class="glyph-seg"></span>
+              <span class="glyph-seg"></span>
+              <span class="glyph-seg"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Macro row -->
+      <div class="macro-row">
+        <div class="macro-item">
+          <div class="n-label">Prot.</div>
+          <div class="n-display-sm c-purple">124<span class="n-unit">g</span></div>
+          <div class="glyph-bar h-3" style="margin-top:5px">
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+        <div class="macro-item">
+          <div class="n-label">Gluc.</div>
+          <div class="n-display-sm c-amber">198<span class="n-unit">g</span></div>
+          <div class="glyph-bar h-3" style="margin-top:5px">
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--amber)"></span>
+            <span class="glyph-seg"></span>
+          </div>
+        </div>
+        <div class="macro-item">
+          <div class="n-label">Lip.</div>
+          <div class="n-display-sm c-red">54<span class="n-unit">g</span></div>
+          <div class="glyph-bar h-3" style="margin-top:5px">
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+      </div>
+    </div><!-- dash-hero -->
+
+    <!-- Half widgets: streak + steps -->
+    <div class="half-widgets">
+
+      <!-- Streak -->
+      <div class="half-widget">
+        <div class="n-label" style="margin-bottom:10px">Streaks</div>
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <div>
+            <div class="n-label" style="font-size:7px;margin-bottom:2px">SÉANCES</div>
+            <div class="n-display-md c-orange" style="font-size:28px">14</div>
+          </div>
+          <div style="width:1px;height:32px;background:var(--divider);margin-bottom:4px"></div>
+          <div>
+            <div class="n-label" style="font-size:7px;margin-bottom:2px">NUTRI</div>
+            <div class="n-display-md c-purple" style="font-size:28px">9</div>
+          </div>
+        </div>
+        <div class="glyph-bar h-8" style="margin-top:12px">
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="half-widget" style="display:flex;flex-direction:column;align-items:center">
+        <div class="n-label" style="align-self:flex-start;margin-bottom:10px">Pas</div>
+        <div style="position:relative;width:80px;height:80px">
+          <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-135deg)">
+            <circle cx="40" cy="40" r="32" fill="none"
+              stroke="rgba(0,212,170,0.10)" stroke-width="7"
+              stroke-dasharray="4 2" pathLength="270" stroke-dashoffset="-90"/>
+            <circle cx="40" cy="40" r="32" fill="none"
+              stroke="#00D4AA" stroke-width="7"
+              stroke-dasharray="4 2" pathLength="270" stroke-dashoffset="-90"
+              style="clip-path:inset(0 28% 0 0)"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-family:var(--font-mono);font-size:17px;font-weight:700;color:var(--teal);line-height:1">7.2k</div>
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--text-60)">/10k</div>
+          </div>
+        </div>
+        <div class="n-label" style="margin-top:8px;font-size:7px">72% objectif</div>
+      </div>
+    </div>
+
+    <!-- Body composition -->
+    <div class="body-widget">
+      <div class="n-label" style="margin-bottom:0">Composition corporelle</div>
+      <div class="body-arcs">
+        <!-- Fat arc -->
+        <div class="body-arc-wrap">
+          <div style="position:relative;width:66px;height:66px">
+            <svg width="66" height="66" viewBox="0 0 66 66" style="transform:rotate(-135deg)">
+              <circle cx="33" cy="33" r="26" fill="none"
+                stroke="rgba(255,59,48,0.10)" stroke-width="6"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"/>
+              <circle cx="33" cy="33" r="26" fill="none"
+                stroke="#FF3B30" stroke-width="6"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"
+                style="clip-path:inset(0 33% 0 0)"/>
+            </svg>
+            <div class="body-arc-center">
+              <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--red)">18%</div>
+            </div>
+          </div>
+          <div class="n-label" style="font-size:7px">Graisse</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--red)">14.8kg</div>
+        </div>
+
+        <!-- Center weight -->
+        <div style="text-align:center">
+          <div class="n-label" style="margin-bottom:4px">Poids</div>
+          <div class="n-display-lg" style="font-size:36px;letter-spacing:-1px">82.4<span class="n-unit">kg</span></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--teal);margin-top:3px">↓ 0.8</div>
+        </div>
+
+        <!-- Muscle arc -->
+        <div class="body-arc-wrap">
+          <div style="position:relative;width:66px;height:66px">
+            <svg width="66" height="66" viewBox="0 0 66 66" style="transform:rotate(-135deg)">
+              <circle cx="33" cy="33" r="26" fill="none"
+                stroke="rgba(0,212,170,0.10)" stroke-width="6"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"/>
+              <circle cx="33" cy="33" r="26" fill="none"
+                stroke="#00D4AA" stroke-width="6"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"
+                style="clip-path:inset(0 0% 0 0)"/>
+            </svg>
+            <div class="body-arc-center">
+              <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--teal);line-height:1.1">40.1<br><span style="font-size:8px;color:var(--text-60)">kg</span></div>
+            </div>
+          </div>
+          <div class="n-label" style="font-size:7px">Muscle</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--teal)">48%</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+  </div><!-- screen-body -->
+
+  <!-- Nav -->
+  <div class="n-nav">
+    <div class="n-nav-item active"><div class="n-nav-icon">⌂</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◎</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◈</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◉</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">▣</div><div class="n-nav-dot"></div></div>
+  </div>
+  </div>
+</div>
+<div class="screen-label">01 — Dashboard</div>
+</div><!-- phone wrapper -->
+
+
+<!-- ════════════════════════════
+     SCREEN 2 — NUTRITION
+════════════════════════════ -->
+<div>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+  <div class="screen-body">
+
+    <div class="n-glyph-deco" style="padding-top:14px">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="nut-hero">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:10px">
+        <div>
+          <div class="n-label" style="margin-bottom:3px">Nutrition</div>
+          <div class="n-screen-title">Jeudi 5 Juin</div>
+        </div>
+        <div class="n-pill active">2 500 kcal obj.</div>
+      </div>
+
+      <!-- Large ring -->
+      <div class="nut-ring-wrap">
+        <svg width="180" height="180" viewBox="0 0 180 180" style="transform:rotate(-135deg)">
+          <!-- outer segments track -->
+          <circle cx="90" cy="90" r="76" fill="none"
+            stroke="rgba(124,111,255,0.10)" stroke-width="10"
+            stroke-dasharray="4 2" pathLength="270" stroke-dashoffset="-90"/>
+          <!-- outer progress 74% -->
+          <circle cx="90" cy="90" r="76" fill="none"
+            stroke="#7C6FFF" stroke-width="10"
+            stroke-dasharray="4 2" pathLength="270" stroke-dashoffset="-90"
+            style="clip-path:inset(0 26% 0 0)"/>
+          <!-- inner burn ring -->
+          <circle cx="90" cy="90" r="60" fill="none"
+            stroke="rgba(255,140,66,0.10)" stroke-width="6"
+            stroke-dasharray="3 2" pathLength="270" stroke-dashoffset="-90"/>
+          <circle cx="90" cy="90" r="60" fill="none"
+            stroke="#FF8C42" stroke-width="6"
+            stroke-dasharray="3 2" pathLength="270" stroke-dashoffset="-90"
+            style="clip-path:inset(0 68% 0 0)"/>
+        </svg>
+        <div class="nut-ring-center">
+          <div class="n-label" style="font-size:8px;margin-bottom:2px">Restantes</div>
+          <div class="n-display-lg c-purple" style="font-size:40px;letter-spacing:-2px">653</div>
+          <div class="n-label" style="font-size:8px;margin-top:1px">kcal</div>
+          <div style="margin-top:8px;font-family:var(--font-mono);font-size:9px;color:var(--text-60)">1847 mangé · 320 brûlé</div>
+        </div>
+      </div>
+
+      <!-- Macro glyph bar full-width -->
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--purple)">P 124g</span>
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--amber)">G 198g</span>
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--red)">L 54g</span>
+        </div>
+        <!-- 3-color glyph bar (discrete segments) -->
+        <div style="display:flex;gap:2px;height:8px">
+          <span style="flex:33;background:var(--purple);border-radius:2px;opacity:.9"></span>
+          <span style="width:2px;background:var(--black)"></span>
+          <span style="flex:52;background:var(--amber);border-radius:2px;opacity:.9"></span>
+          <span style="width:2px;background:var(--black)"></span>
+          <span style="flex:14;background:var(--red);border-radius:2px;opacity:.9"></span>
+        </div>
+      </div>
+    </div><!-- nut-hero -->
+
+    <!-- Meal sections -->
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="n-label">🌅 Petit-déjeuner</div>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--purple)">487 kcal</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--r-md);padding:0 12px">
+        <div class="food-row">
+          <span style="font-size:16px">🥣</span>
+          <div class="food-name">Granola noix</div>
+          <span class="food-gram">100g</span>
+          <span class="food-kcal">310</span>
+        </div>
+        <div class="food-row">
+          <span style="font-size:16px">🍌</span>
+          <div class="food-name">Banane</div>
+          <span class="food-gram">120g</span>
+          <span class="food-kcal">89</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="n-label">☀️ Déjeuner</div>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--purple)">724 kcal</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--r-md);padding:0 12px">
+        <div class="food-row">
+          <span style="font-size:16px">🍗</span>
+          <div class="food-name">Poulet grillé</div>
+          <span class="food-gram">200g</span>
+          <span class="food-kcal">330</span>
+        </div>
+        <div class="food-row">
+          <span style="font-size:16px">🍚</span>
+          <div class="food-name">Riz basmati</div>
+          <span class="food-gram">150g</span>
+          <span class="food-kcal">195</span>
+        </div>
+        <!-- Add placeholder -->
+        <div class="food-row" style="opacity:.3;cursor:pointer">
+          <span style="font-size:14px">＋</span>
+          <div class="food-name" style="color:var(--text-60)">Ajouter un aliment</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- Scan button -->
+  <div class="scan-btn">
+    <span>▣</span> Scanner
+  </div>
+
+  <div class="n-nav">
+    <div class="n-nav-item"><div class="n-nav-icon">⌂</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item active"><div class="n-nav-icon">◎</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◈</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◉</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">▣</div><div class="n-nav-dot"></div></div>
+  </div>
+  </div>
+</div>
+<div class="screen-label">02 — Nutrition</div>
+</div>
+
+
+<!-- ════════════════════════════
+     SCREEN 3 — WORKOUT
+════════════════════════════ -->
+<div>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+  <div class="screen-body">
+
+    <div class="n-glyph-deco" style="padding-top:14px">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="n-header" style="margin-top:10px">
+      <div>
+        <div class="n-label" style="margin-bottom:3px">Cette semaine</div>
+        <div class="n-screen-title">Séances</div>
+      </div>
+      <div style="text-align:right">
+        <div class="n-label" style="font-size:7px;margin-bottom:2px">Streak</div>
+        <div style="font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--orange)">14</div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="workout-summary">
+      <div class="summary-cell">
+        <div class="n-display-md c-orange" style="font-size:26px">4</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">Séances</div>
+      </div>
+      <div class="summary-cell">
+        <div class="n-display-md c-purple" style="font-size:26px">5h20</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">Durée</div>
+      </div>
+      <div class="summary-cell">
+        <div class="n-display-md c-red" style="font-size:26px">1248</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">Kcal</div>
+      </div>
+    </div>
+
+    <!-- Weekly glyph bar (days trained) -->
+    <div style="margin:12px 20px 0">
+      <div class="n-label" style="margin-bottom:8px">Jours actifs</div>
+      <div class="glyph-bar h-12">
+        <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+        <span class="glyph-seg"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+        <span class="glyph-seg"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+        <span class="glyph-seg" style="opacity:.3"></span>
+      </div>
+      <div style="display:flex;gap:3px;margin-top:4px">
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">L</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">M</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">M</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">J</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">V</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">S</span>
+        <span class="n-label" style="flex:1;font-size:7px;text-align:center">D</span>
+      </div>
+    </div>
+
+    <!-- Session list -->
+    <div style="margin-top:16px;padding:0 20px">
+      <div class="n-label" style="margin-bottom:8px">Historique récent</div>
+    </div>
+
+    <div class="session-row">
+      <div class="session-cat">🏋️</div>
+      <div class="session-info">
+        <div class="session-name">Push Day</div>
+        <div class="session-meta">Auj. · 65 min</div>
+        <div class="session-glyph">
+          <div class="glyph-bar h-3">
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+      </div>
+      <div class="session-kcal">428<span style="font-size:9px;color:var(--text-60)"> kcal</span></div>
+    </div>
+
+    <div class="session-row">
+      <div class="session-cat">🏃</div>
+      <div class="session-info">
+        <div class="session-name">Run matinal</div>
+        <div class="session-meta">Hier · 40 min</div>
+        <div class="session-glyph">
+          <div class="glyph-bar h-3">
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--teal)">310<span style="font-size:9px;color:var(--text-60)"> kcal</span></div>
+    </div>
+
+    <div class="session-row">
+      <div class="session-cat">⚡</div>
+      <div class="session-info">
+        <div class="session-name">HIIT</div>
+        <div class="session-meta">Lun · 30 min</div>
+        <div class="session-glyph">
+          <div class="glyph-bar h-3">
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+          </div>
+        </div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--orange)">510<span style="font-size:9px;color:var(--text-60)"> kcal</span></div>
+    </div>
+
+    <div style="height:12px"></div>
+  </div>
+
+  <div class="n-fab">＋</div>
+
+  <div class="n-nav">
+    <div class="n-nav-item"><div class="n-nav-icon">⌂</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◎</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item active"><div class="n-nav-icon">◈</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◉</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">▣</div><div class="n-nav-dot"></div></div>
+  </div>
+  </div>
+</div>
+<div class="screen-label">03 — Séances</div>
+</div>
+
+
+<!-- ════════════════════════════
+     SCREEN 4 — STEPS
+════════════════════════════ -->
+<div>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+  <div class="screen-body">
+
+    <div class="n-glyph-deco" style="padding-top:14px">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="n-header" style="margin-top:10px">
+      <div>
+        <div class="n-label" style="margin-bottom:3px">Activité</div>
+        <div class="n-screen-title">Pas du jour</div>
+      </div>
+    </div>
+
+    <!-- Big step ring -->
+    <div class="steps-ring-wrap">
+      <svg width="210" height="210" viewBox="0 0 210 210" style="transform:rotate(-135deg)">
+        <circle cx="105" cy="105" r="90" fill="none"
+          stroke="rgba(0,212,170,0.10)" stroke-width="12"
+          stroke-dasharray="4 2.5" pathLength="270" stroke-dashoffset="-90"/>
+        <circle cx="105" cy="105" r="90" fill="none"
+          stroke="#00D4AA" stroke-width="12"
+          stroke-dasharray="4 2.5" pathLength="270" stroke-dashoffset="-90"
+          style="clip-path:inset(0 28% 0 0)"/>
+      </svg>
+      <div class="steps-ring-center">
+        <div class="n-label" style="font-size:8px;margin-bottom:3px">Pas aujourd'hui</div>
+        <div class="n-display-xl c-teal" style="font-size:60px">7 241</div>
+        <div class="n-label" style="margin-top:4px">/ 10 000</div>
+        <div style="margin-top:10px">
+          <div class="n-pill active" style="border-color:var(--teal);color:var(--teal)">72% objectif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glyph bar main (large) -->
+    <div style="padding:0 20px;margin-top:8px">
+      <div class="glyph-bar h-12">
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+        <span class="glyph-seg"></span><span class="glyph-seg"></span>
+        <span class="glyph-seg"></span><span class="glyph-seg"></span>
+        <span class="glyph-seg"></span><span class="glyph-seg"></span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="steps-stats">
+      <div class="stat-cell">
+        <div class="n-display-sm c-orange">312</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">Kcal</div>
+      </div>
+      <div class="stat-cell">
+        <div class="n-display-sm c-teal">5.1</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">km</div>
+      </div>
+      <div class="stat-cell">
+        <div class="n-display-sm c-purple">72%</div>
+        <div class="n-label" style="font-size:7px;margin-top:3px">Objectif</div>
+      </div>
+    </div>
+
+    <!-- Week chart -->
+    <div class="week-chart">
+      <div class="n-label" style="margin-bottom:12px">7 derniers jours</div>
+      <div class="bars-row">
+        <div class="bar-col"><div class="bar-val teal">12k</div><div class="bar-fill goal" style="height:62px"></div><div class="bar-label">L</div></div>
+        <div class="bar-col"><div class="bar-val">8k</div><div class="bar-fill" style="height:41px"></div><div class="bar-label">M</div></div>
+        <div class="bar-col"><div class="bar-val teal">11k</div><div class="bar-fill goal" style="height:57px"></div><div class="bar-label">M</div></div>
+        <div class="bar-col"><div class="bar-val">6k</div><div class="bar-fill" style="height:31px"></div><div class="bar-label">J</div></div>
+        <div class="bar-col"><div class="bar-val teal">14k</div><div class="bar-fill goal" style="height:72px"></div><div class="bar-label">V</div></div>
+        <div class="bar-col"><div class="bar-val">4k</div><div class="bar-fill" style="height:21px"></div><div class="bar-label">S</div></div>
+        <div class="bar-col"><div class="bar-val teal">7.2k</div><div class="bar-fill today" style="height:37px;border:1px solid var(--teal)"></div><div class="bar-label" style="color:var(--teal)">AUJ</div></div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+  </div>
+
+  <div class="n-nav">
+    <div class="n-nav-item"><div class="n-nav-icon">⌂</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◎</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◈</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item active"><div class="n-nav-icon">◉</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">▣</div><div class="n-nav-dot"></div></div>
+  </div>
+  </div>
+</div>
+<div class="screen-label">04 — Pas</div>
+</div>
+
+
+<!-- ════════════════════════════
+     SCREEN 5 — BODY
+════════════════════════════ -->
+<div>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+  <div class="screen-body">
+
+    <div class="n-glyph-deco" style="padding-top:14px">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span class="on"></span><span class="on"></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="n-header" style="margin-top:10px">
+      <div>
+        <div class="n-label" style="margin-bottom:3px">Corps</div>
+        <div class="n-screen-title">Composition</div>
+      </div>
+      <div style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:8px;letter-spacing:2px;color:var(--text-60);text-transform:uppercase;cursor:pointer">
+        Import Basic Fit
+      </div>
+    </div>
+
+    <!-- Hero body -->
+    <div class="body-hero-cell">
+      <div class="n-label" style="margin-bottom:6px">Dernier relevé · 3 juin</div>
+      <div class="body-main-weight">
+        <div class="n-display-xl" style="font-size:64px;letter-spacing:-3px">82.4</div>
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-60);margin-bottom:8px">kg</div>
+        <div style="margin-left:8px;margin-bottom:6px">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--teal)">↓ 0.8 kg</div>
+          <div class="n-label" style="font-size:7px">ce mois</div>
+        </div>
+      </div>
+
+      <!-- Dual arc -->
+      <div class="body-comp-arcs">
+        <div class="comp-arc-block">
+          <div class="comp-arc-rel">
+            <svg width="82" height="82" viewBox="0 0 82 82" style="transform:rotate(-135deg)">
+              <circle cx="41" cy="41" r="32" fill="none"
+                stroke="rgba(255,59,48,0.10)" stroke-width="7"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"/>
+              <circle cx="41" cy="41" r="32" fill="none"
+                stroke="#FF3B30" stroke-width="7"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"
+                style="clip-path:inset(0 33% 0 0)"/>
+            </svg>
+            <div class="comp-arc-center">
+              <div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--red)">18%</div>
+            </div>
+          </div>
+          <div class="n-label" style="font-size:7px">Graisse</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--red)">14.8 kg</div>
+        </div>
+
+        <div style="border-left:1px solid var(--divider);height:80px;align-self:center"></div>
+
+        <div class="comp-arc-block">
+          <div class="comp-arc-rel">
+            <svg width="82" height="82" viewBox="0 0 82 82" style="transform:rotate(-135deg)">
+              <circle cx="41" cy="41" r="32" fill="none"
+                stroke="rgba(0,212,170,0.10)" stroke-width="7"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"/>
+              <circle cx="41" cy="41" r="32" fill="none"
+                stroke="#00D4AA" stroke-width="7"
+                stroke-dasharray="3.5 2" pathLength="270" stroke-dashoffset="-90"/>
+            </svg>
+            <div class="comp-arc-center" style="flex-direction:column">
+              <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--teal);line-height:1">40.1</div>
+              <div style="font-family:var(--font-mono);font-size:8px;color:var(--text-60)">kg</div>
+            </div>
+          </div>
+          <div class="n-label" style="font-size:7px">Muscle</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal)">48%</div>
+        </div>
+      </div>
+
+      <!-- Measurements -->
+      <div class="mensur-row">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--amber)">82<span class="n-unit">cm</span></div>
+          <div class="n-label" style="font-size:7px;margin-top:2px">Taille</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--purple)">96<span class="n-unit">cm</span></div>
+          <div class="n-label" style="font-size:7px;margin-top:2px">Poitrine</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--teal)">36<span class="n-unit">cm</span></div>
+          <div class="n-label" style="font-size:7px;margin-top:2px">Bras</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hist chart -->
+    <div class="body-hist">
+      <div class="n-label">Évolution 30 jours</div>
+      <div class="hist-bars" style="margin-top:12px">
+        <div class="hist-bar" style="height:50px"></div>
+        <div class="hist-bar" style="height:48px"></div>
+        <div class="hist-bar" style="height:46px"></div>
+        <div class="hist-bar" style="height:44px"></div>
+        <div class="hist-bar" style="height:42px"></div>
+        <div class="hist-bar" style="height:38px"></div>
+        <div class="hist-bar" style="height:34px"></div>
+        <div class="hist-bar latest" style="height:30px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font-family:var(--font-mono);font-size:8px;color:var(--text-60)">84.1 kg</span>
+        <span style="font-family:var(--font-mono);font-size:8px;color:var(--teal)">82.4 kg ↓</span>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+  </div>
+
+  <div class="n-fab" style="border-color:var(--teal);color:var(--teal)">＋</div>
+
+  <div class="n-nav">
+    <div class="n-nav-item"><div class="n-nav-icon">⌂</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◎</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◈</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item"><div class="n-nav-icon">◉</div><div class="n-nav-dot"></div></div>
+    <div class="n-nav-item active"><div class="n-nav-icon">▣</div><div class="n-nav-dot"></div></div>
+  </div>
+  </div>
+</div>
+<div class="screen-label">05 — Corps</div>
+</div>
+
+</div><!-- screens -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     DESIGN SYSTEM DOCUMENTATION
+══════════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-head">Design System · Nothing OS Fitness · Spécifications</div>
+
+  <div class="ds-grid">
+
+    <!-- Tokens -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Fondations</div>
+      <div class="ds-card-title">Tokens couleur</div>
+      <table class="token-table">
+        <tr><td class="t-name">black</td><td class="t-val"><span class="swatch" style="background:#000;border:1px solid #333"></span>#000000</td><td class="t-name">Tout fond</td></tr>
+        <tr><td class="t-name">surface</td><td class="t-val"><span class="swatch" style="background:#0D0D0D;border:1px solid #333"></span>#0D0D0D</td><td class="t-name">Cards</td></tr>
+        <tr><td class="t-name">border</td><td class="t-val">rgba(255,255,255,0.08)</td><td class="t-name">Toutes bordures</td></tr>
+        <tr><td class="t-name">text-100</td><td class="t-val">#FFFFFF</td><td class="t-name">Titres</td></tr>
+        <tr><td class="t-name">text-60</td><td class="t-val">#999999</td><td class="t-name">Labels</td></tr>
+        <tr><td class="t-name">purple</td><td class="t-val"><span class="swatch" style="background:#7C6FFF"></span>#7C6FFF</td><td class="t-name">Nutrition seul.</td></tr>
+        <tr><td class="t-name">teal</td><td class="t-val"><span class="swatch" style="background:#00D4AA"></span>#00D4AA</td><td class="t-name">Pas / Muscle</td></tr>
+        <tr><td class="t-name">orange</td><td class="t-val"><span class="swatch" style="background:#FF8C42"></span>#FF8C42</td><td class="t-name">Streak / Brûlé</td></tr>
+        <tr><td class="t-name">red</td><td class="t-val"><span class="swatch" style="background:#FF3B30"></span>#FF3B30</td><td class="t-name">Graisse / Erreur</td></tr>
+        <tr><td class="t-name">amber</td><td class="t-val"><span class="swatch" style="background:#FFAA33"></span>#FFAA33</td><td class="t-name">Glucides</td></tr>
+      </table>
+    </div>
+
+    <!-- Typography -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Typographie</div>
+      <div class="ds-card-title">Échelle</div>
+      <div class="demo-strip">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:52px;font-weight:700;letter-spacing:-2px;line-height:1;color:var(--teal)">7241</div>
+          <div class="n-label" style="font-size:8px">Display-XL · 52px · Space Mono Bold · kerning -2px</div>
+        </div>
+        <div style="height:1px;background:var(--divider)"></div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:36px;font-weight:700;letter-spacing:-1px;line-height:1;color:var(--purple)">1847</div>
+          <div class="n-label" style="font-size:8px">Display-LG · 36px · Space Mono Bold · kerning -1px</div>
+        </div>
+        <div style="height:1px;background:var(--divider)"></div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--orange)">653</div>
+          <div class="n-label" style="font-size:8px">Display-MD · 22px · Space Mono Bold</div>
+        </div>
+        <div style="height:1px;background:var(--divider)"></div>
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text-100)">Poulet grillé 200g</div>
+          <div class="n-label" style="font-size:8px">Body · 13px · Inter Medium</div>
+        </div>
+        <div style="height:1px;background:var(--divider)"></div>
+        <div>
+          <div style="font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:var(--text-60);font-weight:500">Calories du jour</div>
+          <div class="n-label" style="font-size:8px">Label · 9px · Inter Medium · tracking 3.5px · UPPERCASE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GlyphBar spec -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Composant signature</div>
+      <div class="ds-card-title">GlyphBar — 4 tailles</div>
+      <div class="demo-strip">
+        <div>
+          <div class="n-label" style="margin-bottom:6px">H-12 · Hero widget (streak, steps)</div>
+          <div class="glyph-bar h-12">
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--orange)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+        <div>
+          <div class="n-label" style="margin-bottom:6px">H-8 · Widget data (streak display)</div>
+          <div class="glyph-bar h-8">
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--purple)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+        <div>
+          <div class="n-label" style="margin-bottom:6px">H-5 · Macro bar (nutrition card)</div>
+          <div class="glyph-bar h-5">
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--teal)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+        <div>
+          <div class="n-label" style="margin-bottom:6px">H-3 · Micro inline (list items)</div>
+          <div class="glyph-bar h-3">
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg on" style="--seg-color:var(--red)"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+            <span class="glyph-seg"></span><span class="glyph-seg"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arc spec -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Composant</div>
+      <div class="ds-card-title">Arc segmenté — spécification SVG</div>
+      <p>Stroke en <strong style="color:var(--text-100)">dasharray discret</strong> pour imiter les LEDs Nothing. Pas de strokeLinecap round.</p>
+      <div style="margin-top:12px;background:var(--surface);border-radius:var(--r-sm);padding:12px;font-family:var(--font-mono);font-size:10px;line-height:2;color:#999">
+        <span style="color:var(--text-60)">/* Track */</span><br>
+        stroke-dasharray: <span style="color:var(--purple)">4 2</span><br>
+        pathLength: <span style="color:var(--teal)">270</span><br>
+        stroke-dashoffset: <span style="color:var(--orange)">-90</span><br>
+        stroke-linecap: <span style="color:var(--red)">butt</span><br><br>
+        <span style="color:var(--text-60)">/* Progress (clip-path % = 100-progress) */</span><br>
+        clip-path: inset(0 <span style="color:var(--purple)">26%</span> 0 0)<br><br>
+        <span style="color:var(--text-60)">/* Arc ouverture : 270°, départ bas-gauche */</span><br>
+        rotate(<span style="color:var(--teal)">-135deg</span>) sur le SVG
+      </div>
+      <ul style="margin-top:10px">
+        <li>stroke-width: 8dp (small) · 10dp (medium) · 12dp (large)</li>
+        <li>Jamais stroke-linecap:round</li>
+        <li>Track alpha : 10% de la couleur accent</li>
+        <li>Aucun shadow, aucun glow</li>
+      </ul>
+    </div>
+
+    <!-- Widget hierarchy -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Architecture</div>
+      <div class="ds-card-title">Hiérarchie des widgets</div>
+      <div class="demo-strip">
+        <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div class="n-label" style="margin-bottom:6px;color:var(--purple)">HERO (pleine largeur)</div>
+          <p>Chiffre principal ≥ 36px · Arc segmenté · GlyphBar H-8/12. <br>Usage : calorie dashboard, ring steps plein écran.</p>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div class="n-label" style="margin-bottom:6px;color:var(--teal)">DATA (demi-largeur)</div>
+          <p>Chiffre 20-28px · GlyphBar H-8. <br>Usage : streak, pas résumé, résumé séances.</p>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div class="n-label" style="margin-bottom:6px;color:var(--text-60)">LIST (item)</div>
+          <p>Chiffre 12-14px · GlyphBar H-3 optionnel. <br>Usage : food rows, session rows, historique.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="ds-card">
+      <div class="ds-card-tag">Règles impératives</div>
+      <div class="ds-card-title">Nothing OS — 8 lois</div>
+      <div class="rule-row"><span class="rule-icon">⬛</span><div class="rule-text"><strong>Fond = #000000 pur.</strong> Jamais de tinte bleue ni de dégradé sur les surfaces.</div></div>
+      <div class="rule-row"><span class="rule-icon">🎨</span><div class="rule-text"><strong>Couleur sur data seulement.</strong> Le fond d'une card, d'un header ou d'un label reste noir ou gris.</div></div>
+      <div class="rule-row"><span class="rule-icon">✏️</span><div class="rule-text"><strong>Zéro gradient.</strong> background: linear-gradient → interdit partout.</div></div>
+      <div class="rule-row"><span class="rule-icon">🔲</span><div class="rule-text"><strong>Zéro shadow/glow.</strong> box-shadow, text-shadow, drop-shadow → interdits.</div></div>
+      <div class="rule-row"><span class="rule-icon">🔤</span><div class="rule-text"><strong>Monospace pour tout chiffre.</strong> Space Mono sur toute valeur numérique sans exception.</div></div>
+      <div class="rule-row"><span class="rule-icon">↔</span><div class="rule-text"><strong>Labels = UPPERCASE + letter-spacing ≥ 3px.</strong> Aucun label en casse mixte.</div></div>
+      <div class="rule-row"><span class="rule-icon">⠿</span><div class="rule-text"><strong>Arc = segments discrets.</strong> stroke-dasharray sur pathLength=270. Jamais un arc lisse.</div></div>
+      <div class="rule-row"><span class="rule-icon">▣</span><div class="rule-text"><strong>GlyphBar = élément principal,</strong> pas décoratif. Toujours visible, toujours en rapport avec une donnée.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Comparison -->
+<div class="compare" style="max-width:1100px;margin:24px auto 0">
+  <div class="compare-card">
+    <div class="compare-head bad">❌ Violations précédentes</div>
+    <div class="compare-row"><span class="icon">🟥</span>Fond #0A0A14 avec tinte bleue — pas Nothing OS</div>
+    <div class="compare-row"><span class="icon">🟥</span>box-shadow glow sur les arcs SVG</div>
+    <div class="compare-row"><span class="icon">🟥</span>background: linear-gradient sur les cards hero</div>
+    <div class="compare-row"><span class="icon">🟥</span>GlyphBar 5-6dp, invisible — rôle décoratif seulement</div>
+    <div class="compare-row"><span class="icon">🟥</span>Texte secondaire #AAAACC "blue-tinted grey"</div>
+    <div class="compare-row"><span class="icon">🟥</span>Arc = trait lisse continu (pas segmenté)</div>
+    <div class="compare-row"><span class="icon">🟥</span>FAB coloré plein (fond violet)</div>
+  </div>
+  <div class="compare-card">
+    <div class="compare-head good">✅ Standard Nothing OS appliqué</div>
+    <div class="compare-row"><span class="icon">🟩</span>Fond #000000 strict, surface #0D0D0D</div>
+    <div class="compare-row"><span class="icon">🟩</span>Zéro shadow/glow — forme définie par la bordure seule</div>
+    <div class="compare-row"><span class="icon">🟩</span>Zéro gradient — background monochrome uniquement</div>
+    <div class="compare-row"><span class="icon">🟩</span>GlyphBar H-12/8/5/3 — 4 tailles, rôle fonctionnel</div>
+    <div class="compare-row"><span class="icon">🟩</span>Texte secondaire #999999 — gris neutre pur</div>
+    <div class="compare-row"><span class="icon">🟩</span>Arc = stroke-dasharray discret (pathLength 270)</div>
+    <div class="compare-row"><span class="icon">🟩</span>FAB = fond noir, bordure blanche, icône blanc</div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:56px;padding-bottom:24px">
+  <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:4px;color:var(--text-30);text-transform:uppercase">GymCompanion · Nothing OS Design System · v3.0</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Build and IDE outputs
+.gradle/
+.idea/
+.kotlin/
+build/
+**/build/
+local.properties
+*.iml
+
+# Runtime diagnostics and local files
+*.hprof
+*.log
+.DS_Store

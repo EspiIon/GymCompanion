@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Loic\\\\Desktop\\\\Dev\\\\GymCompanion\" -Recurse -Directory -Name)",
+      "Bash(Select-Object -First 30)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Loic\\\\Desktop\\\\Dev\\\\GymCompanion\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(dir \"C:\\\\Users\\\\Loic\\\\Desktop\\\\Dev\\\\GymCompanion\")"
+    ]
+  }
+}
