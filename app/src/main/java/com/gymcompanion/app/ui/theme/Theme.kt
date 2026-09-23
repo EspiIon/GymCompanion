@@ -28,7 +28,16 @@ val NothingDivider       = Color(0xFF222222)  // section dividers
 // NothingGrey1 = primary body · NothingGrey2 = secondary labels · NothingGrey3 = disabled
 val NothingGrey1   = NGrey               // #DCD7D2
 val NothingGrey2   = WindowGrey          // #B1B3B3
-val NothingGrey3   = Color(0xFF666666)   // disabled text, decorative
+val NothingGrey3   = Color(0xFF777777)   // texte secondaire discret : jamais une information essentielle
+
+// Couleurs de visualisation. Elles complètent les accents Nothing sans transformer
+// chaque zone en signal d'alerte.
+val DataBlue        = Color(0xFF63A7FF)
+val DataMint        = Color(0xFF59D6B4)
+val DataLavender    = Color(0xFFB3A5FF)
+val DataAmber       = Color(0xFFFFC700)
+val PetCream        = Color(0xFFFFD7A3)
+val PetCreamShade   = Color(0xFFB97843)
 
 // ── Primary accents (official) — never decorative, one moment per screen ──────
 val NothingRed     = Color(0xFFC8102E)   // N-Red — STATUS: streak, "today", over-limit
@@ -70,15 +79,15 @@ val AccentAmber    = NothingYellow
 
 // ── Material 3 colour scheme ──────────────────────────────────────────────────
 private val DarkColorScheme = darkColorScheme(
-    primary              = NothingWhite,
+    primary              = DataMint,
     onPrimary            = NothingBlack,
     primaryContainer     = NothingDark2,
     onPrimaryContainer   = NothingGrey1,
-    secondary            = NothingYellow,
+    secondary            = DataMint,
     onSecondary          = NothingBlack,
-    secondaryContainer   = Color(0xFF332900),
-    onSecondaryContainer = NothingYellow,
-    tertiary             = NothingRed,
+    secondaryContainer   = Color(0xFF163A31),
+    onSecondaryContainer = DataMint,
+    tertiary             = DataLavender,
     onTertiary           = NothingWhite,
     background           = NothingBlack,
     onBackground         = NothingWhite,

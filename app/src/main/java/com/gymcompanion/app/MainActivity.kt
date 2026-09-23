@@ -17,7 +17,12 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.navArgument
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gymcompanion.app.ui.components.AppPetBar
+import com.gymcompanion.app.ui.components.AppPetSheet
+import com.gymcompanion.app.viewmodel.PetViewModel
 import com.gymcompanion.app.ui.navigation.*
 import com.gymcompanion.app.ui.screens.ai.AiScreen
 import com.gymcompanion.app.ui.screens.body.BodyScreen
@@ -27,7 +32,6 @@ import com.gymcompanion.app.ui.screens.dashboard.DashboardScreen
 import com.gymcompanion.app.ui.screens.nutrition.NutritionScreen
 import com.gymcompanion.app.ui.screens.goals.GoalsScreen
 import com.gymcompanion.app.ui.screens.progress.ProgressPhotoScreen
-import com.gymcompanion.app.ui.screens.pet.PetScreen
 import com.gymcompanion.app.ui.screens.settings.SettingsScreen
 import com.gymcompanion.app.ui.screens.steps.StepsScreen
 import com.gymcompanion.app.ui.screens.workout.WorkoutScreen
@@ -53,10 +57,20 @@ fun GymCompanionAppUI() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val petViewModel: PetViewModel = hiltViewModel()
+    val petState by petViewModel.state.collectAsStateWithLifecycle()
+    var showPetSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Background,
+        topBar = {
+            AppPetBar(
+                state = petState,
+                onClick = { showPetSheet = true },
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
         bottomBar = {
             GymBottomNav(
                 currentRoute = currentRoute,
@@ -93,12 +107,9 @@ fun GymCompanionAppUI() {
                     onNavigateToAi        = { navTo(Screen.Ai.route) },
                     onNavigateToCalendar  = { navTo(Screen.Calendar.route) },
                     onNavigateToGoals     = { navTo(Screen.Goals.route) },
-                    onNavigateToPet       = { navTo(Screen.Pet.route) },
+                    onNavigateToPet       = { showPetSheet = true },
                     onNavigateToMenu      = { navController.navigate(Screen.Workout.route) }
                 )
-            }
-            composable(Screen.Pet.route) {
-                PetScreen(onBack = { navController.popBackStack() })
             }
             composable(Screen.Nutrition.route) { NutritionScreen() }
             composable(Screen.Workout.route) {
@@ -142,6 +153,15 @@ fun GymCompanionAppUI() {
                 AiScreen(initialMessage = msg)
             }
         }
+    }
+
+    if (showPetSheet) {
+        AppPetSheet(
+            state = petState,
+            onDismiss = { showPetSheet = false },
+            onPet = petViewModel::pet,
+            onRename = petViewModel::rename
+        )
     }
 }
 

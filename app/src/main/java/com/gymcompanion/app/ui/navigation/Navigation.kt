@@ -17,8 +17,6 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     object Goals : Screen("goals", "Objectifs", Icons.Rounded.CheckCircle)
     object ExerciseProgress : Screen("exercise_progress", "Progression", Icons.Rounded.TrendingUp)
     object BodyDetail : Screen("body_detail/{type}", "Détail Corps", Icons.Rounded.MonitorWeight)
-    // Non présent dans la bottom-nav, accessible via le widget du dashboard
-    object Pet : Screen("pet", "Compagnon", Icons.Rounded.Pets)
 }
 
 val bottomNavItems = listOf(

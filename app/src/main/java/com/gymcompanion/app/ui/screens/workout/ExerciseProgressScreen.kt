@@ -36,7 +36,7 @@ fun ExerciseProgressScreen(viewModel: ExerciseProgressViewModel = hiltViewModel(
                         fontWeight = FontWeight.SemiBold, fontSize = 30.sp,
                         letterSpacing = 1.sp, color = NothingWhite)
                     Spacer(Modifier.height(6.dp))
-                    NLabel("1RM ESTIMÉ PAR EXERCICE (FORMULE EPLEY)", size = 8.sp, color = NothingGrey2)
+                    NLabel("1RM ESTIMÉ PAR EXERCICE · FORMULE EPLEY", size = 12.sp, color = NothingGrey2)
                 }
             }
 
@@ -81,21 +81,23 @@ private fun ExerciseCard(
                 Text(summary.name, color = NothingWhite, fontSize = 15.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(4.dp))
                 NLabel("${summary.sessionCount} SÉANCE${if (summary.sessionCount > 1) "S" else ""}",
-                    size = 8.sp, color = NothingGrey2)
+                    size = 12.sp, color = NothingGrey2)
             }
             Column(horizontalAlignment = Alignment.End) {
                 NumText("${summary.best1rm.toInt()}", fontSize = 26.sp, fontWeight = FontWeight.Medium,
-                    color = NothingBlue)
-                NLabel("1RM KG", size = 7.sp, color = NothingGrey2)
+                    color = DataBlue)
+                NLabel("1RM KG", size = 12.sp, color = NothingGrey2)
             }
         }
 
         if (summary.oneRmTrend.size >= 2) {
             Spacer(Modifier.height(12.dp))
-            Sparkline(
+            InteractiveTrendChart(
                 values = summary.oneRmTrend,
-                color = NothingBlue, dotColor = NothingWhite,
-                modifier = Modifier.fillMaxWidth().height(if (expanded) 70.dp else 40.dp)
+                labels = emptyList(),
+                targetValue = null,
+                valueFormatter = { value -> "${value.toInt()} kg" },
+                modifier = Modifier.fillMaxWidth().height(if (expanded) 210.dp else 92.dp)
             )
         }
 
@@ -126,6 +128,6 @@ private fun StatBlock(label: String, value: String) {
         Text(value, color = NothingWhite, fontSize = 14.sp, fontWeight = FontWeight.Medium,
             fontFamily = LocalNumericFont.current)
         Spacer(Modifier.height(4.dp))
-        NLabel(label, size = 7.sp, color = NothingGrey2)
+        NLabel(label, size = 12.sp, color = NothingGrey2)
     }
 }

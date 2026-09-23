@@ -17,13 +17,13 @@ import androidx.compose.ui.graphics.*
 import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymcompanion.app.data.model.*
 import com.gymcompanion.app.ui.components.*
-import com.gymcompanion.app.ui.screens.pet.PetGlyphFace
-import com.gymcompanion.app.ui.screens.pet.moodLabel
+import com.gymcompanion.app.ui.components.AppPet
 import com.gymcompanion.app.ui.theme.*
 import com.gymcompanion.app.common.todayFlow
 import com.gymcompanion.app.viewmodel.DashboardViewModel
@@ -183,11 +183,11 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(128.dp)) {
-                        SegmentedArc(progress = calProgress, color = NothingBlue, modifier = Modifier.fillMaxSize())
+                        SegmentedArc(progress = calProgress, color = DataMint, modifier = Modifier.fillMaxSize())
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             NumText("${state.todayCalories}", fontSize = 34.sp)
                             Spacer(Modifier.height(4.dp))
-                            Lbl("/ ${state.calorieGoal} KCAL", size = 8.sp)
+                            Lbl("/ ${state.calorieGoal} KCAL", size = 12.sp)
                         }
                     }
                     Spacer(Modifier.width(22.dp))
@@ -202,39 +202,30 @@ fun DashboardScreen(
 
         item { Spacer(Modifier.height(8.dp)) }
 
-        // ── COMPAGNON (Tamagotchi) ───────────────────────────────────────────────
+        // Le compagnon vit désormais dans le bandeau commun AppPetBar. On garde ici
+        // seulement un rappel discret, sans dupliquer son visage dans une carte.
         item(key = "pet") {
-            WidgetForm(
-                modifier = Modifier.fillMaxWidth(),
-                title = petState.name.uppercase(),
-                onClick = onNavigateToPet
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onNavigateToPet)
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        Modifier
-                            .size(80.dp)
-                            .scale(1f)
-                            .clip(CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        PetGlyphFace(mood = petState.mood, color = NothingWhite, modifier = Modifier.size(80.dp))
-                    }
-                    Spacer(Modifier.width(18.dp))
-                    Column(Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Lbl(petState.name.uppercase(), size = 9.sp)
-                        }
-                        Spacer(Modifier.height(10.dp))
-                        GlyphSegmentBar(
-                            progress = if (petState.goalsTotal > 0) petState.goalsMet.toFloat() / petState.goalsTotal else 0f,
-                            color = NothingBlue,
-                            segmentCount = petState.goalsTotal.coerceAtLeast(1),
-                            segmentHeight = 6f
-                        )
-                        Spacer(Modifier.height(6.dp))
-                        Lbl("${petState.goalsMet} / ${petState.goalsTotal} OBJECTIFS")
-                    }
-                }
+                AppPet(
+                    mood = petState.mood,
+                    name = petState.name,
+                    onTap = onNavigateToPet,
+                    modifier = Modifier.size(38.dp)
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = "${petState.goalsMet} objectif${if (petState.goalsMet > 1) "s" else ""} atteint${if (petState.goalsMet > 1) "s" else ""} sur ${petState.goalsTotal}",
+                    color = NothingGrey1,
+                    fontSize = 13.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(Icons.Rounded.ChevronRight, null, tint = NothingGrey2, modifier = Modifier.size(20.dp))
             }
         }
         item { Spacer(Modifier.height(8.dp)) }
@@ -275,7 +266,7 @@ fun DashboardScreen(
                         Spacer(Modifier.height(10.dp))
                         NumText("${state.todaySteps}", fontSize = 34.sp)
                         Spacer(Modifier.height(12.dp))
-                        GlyphSegmentBar(progress = stepProgress, color = NothingBlue, segmentCount = 14, segmentHeight = 6f)
+                        GlyphSegmentBar(progress = stepProgress, color = DataBlue, segmentCount = 14, segmentHeight = 6f)
                         Spacer(Modifier.height(8.dp))
                         Lbl("$stepPct% · ${state.stepGoal}")
                     }
@@ -287,7 +278,7 @@ fun DashboardScreen(
                         Spacer(Modifier.height(12.dp))
                         GlyphSegmentBar(
                             progress = (state.recentWorkouts.size / 7f).coerceIn(0f, 1f),
-                            color = NothingBlue, segmentCount = 7, segmentHeight = 6f
+                            color = DataLavender, segmentCount = 7, segmentHeight = 6f
                         )
                         Spacer(Modifier.height(8.dp))
                         Lbl("L M M J V S D")
@@ -367,11 +358,11 @@ fun DashboardScreen(
                         Column(Modifier.weight(1f)) {
                             Text(w.name, color = NothingWhite, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(3.dp))
-                            Lbl("${w.durationMinutes} MIN · ${w.date}", size = 9.sp)
+                            Lbl("${w.durationMinutes} MIN · ${w.date}", size = 12.sp)
                         }
                         NumText("${w.caloriesBurned}", fontSize = 16.sp)
                         Spacer(Modifier.width(3.dp))
-                        Lbl("KCAL", size = 8.sp)
+                        Lbl("KCAL", size = 12.sp)
                     }
                 }
                 if (i > 0 && i < 3) Spacer(Modifier.height(8.dp))
@@ -418,64 +409,6 @@ fun DashboardScreen(
     }
 }
 
-// ── Compagnon (Tamagotchi widget) ────────────────────────────────────────────
-
-@Composable
-private fun PetWidget(pet: PetUiState, onPet: () -> Unit, onNavigate: () -> Unit) {
-    val accent = if (pet.mood == PetMood.SAD || pet.mood == PetMood.MISERABLE) NothingRed else NothingWhite
-
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // ── Zone visage : tap = caresser ──────────────────────────────
-        Box(
-            Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-                .clickable(onClick = onPet),
-            contentAlignment = Alignment.Center
-        ) {
-            PetGlyphFace(mood = pet.mood, color = accent, modifier = Modifier.size(80.dp))
-        }
-
-        Spacer(Modifier.width(18.dp))
-
-        // ── Zone infos : tap = naviguer vers PetScreen ────────────────
-        Column(
-            Modifier.weight(1f).clickable(onClick = onNavigate)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = pet.name.uppercase(),
-                    fontFamily = LocalNumericFont.current,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    letterSpacing = 0.5.sp,
-                    color = NothingWhite
-                )
-                Lbl(moodLabel(pet.mood), color = accent)
-            }
-            Spacer(Modifier.height(10.dp))
-            GlyphSegmentBar(
-                progress = if (pet.goalsTotal > 0) pet.goalsMet.toFloat() / pet.goalsTotal else 0f,
-                color = accent,
-                segmentCount = pet.goalsTotal.coerceAtLeast(1),
-                segmentHeight = 6f
-            )
-            Spacer(Modifier.height(6.dp))
-            Lbl("${pet.goalsMet} / ${pet.goalsTotal} OBJECTIFS")
-            Spacer(Modifier.height(8.dp))
-            Text(pet.message, color = NothingGrey1, fontSize = 11.sp, lineHeight = 15.sp)
-        }
-        Spacer(Modifier.width(8.dp))
-        Icon(Icons.Rounded.ChevronRight, null, tint = NothingGrey3, modifier = Modifier.size(18.dp))
-    }
-}
-
 // ── Building blocks ──────────────────────────────────────────────────────────
 
 @Composable
@@ -483,7 +416,7 @@ private fun Lbl(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = NothingGrey2,
-    size: TextUnit = 9.sp
+    size: TextUnit = 12.sp
 ) = Text(
     text = text,
     modifier = modifier,
@@ -491,7 +424,9 @@ private fun Lbl(
     fontFamily = MonoFamily,
     fontWeight = FontWeight.Normal,
     fontSize = size,
-    letterSpacing = 2.4.sp
+    letterSpacing = 0.8.sp,
+    maxLines = 2,
+    overflow = TextOverflow.Ellipsis
 )
 
 @Composable
@@ -510,7 +445,7 @@ private fun MacroCol(label: String, value: Int, unit: String, progress: Float, m
         Row(verticalAlignment = Alignment.Bottom) {
             NumText("$value", fontSize = 22.sp)
             Spacer(Modifier.width(2.dp))
-            Lbl(unit, size = 8.sp, modifier = Modifier.padding(bottom = 3.dp))
+            Lbl(unit, size = 12.sp, modifier = Modifier.padding(bottom = 3.dp))
         }
         Spacer(Modifier.height(10.dp))
         GlyphSegmentBar(progress = progress.coerceIn(0f, 1f), color = NothingWhite, segmentCount = 7, segmentHeight = 3f)
@@ -617,7 +552,7 @@ private fun BodyWidget(rec: BodyRecord, history: List<BodyRecord>, onClick: () -
 @Composable
 private fun BodyMetric(label: String, value: String, progress: Float, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Lbl(label, size = 8.sp)
+        Lbl(label, size = 12.sp)
         Spacer(Modifier.height(6.dp))
         NumText(value, fontSize = 16.sp)
         Spacer(Modifier.height(8.dp))
@@ -700,7 +635,7 @@ private fun GoalRow(goal: Goal, onToggle: () -> Unit) {
                 letterSpacing = 0.3.sp
             )
             Spacer(Modifier.height(2.dp))
-            Lbl(goal.category.label.uppercase(), size = 8.sp,
+            Lbl(goal.category.label.uppercase(), size = 12.sp,
                 color = if (goal.isCompleted) NothingGrey3 else NothingGrey2)
         }
     }
@@ -720,11 +655,11 @@ private fun WorkoutRow(w: WorkoutSession) {
         Column(Modifier.weight(1f)) {
             Text(w.name, color = NothingWhite, fontSize = 13.sp, fontWeight = FontWeight.Medium)
             Spacer(Modifier.height(3.dp))
-            Lbl("${w.durationMinutes} MIN · ${w.date}", size = 9.sp)
+            Lbl("${w.durationMinutes} MIN · ${w.date}", size = 12.sp)
         }
         NumText("${w.caloriesBurned}", fontSize = 16.sp)
         Spacer(Modifier.width(3.dp))
-        Lbl("KCAL", size = 8.sp)
+        Lbl("KCAL", size = 12.sp)
     }
 }
 

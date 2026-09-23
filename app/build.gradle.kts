@@ -74,7 +74,6 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation)
-    implementation(libs.health.connect)
     implementation(libs.coil.compose)
     implementation(libs.androidx.ui.text.google.fonts)
     // CameraX

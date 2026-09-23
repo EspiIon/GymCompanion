@@ -23,6 +23,8 @@ Réorganisation documentaire réalisée : README, architecture, guide de dévelo
 
 ## Usage, performance et interface
 
+État au 23 septembre 2026 : première passe U02/U03 implémentée et compilée, sans validation sur appareil. Un bandeau persistant remplace la page du compagnon ; il ouvre une fiche flottante et utilise une mascotte Canvas. Les graphiques principaux du poids et de progression sont désormais tactiles et plus hauts. Les petites libellés du parcours modifié visent 12 sp. Le rendu sur appareil, le contraste, la grande police et TalkBack restent à valider.
+
 | ID | Travail | Critères de fin |
 | --- | --- | --- |
 | U01 | Implémenter le suivi automatique des pas | Source choisie et documentée, permissions, disponibilité, doublons, redémarrage et changement de jour gérés ; saisie manuelle toujours explicite |

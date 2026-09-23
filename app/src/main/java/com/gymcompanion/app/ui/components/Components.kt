@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import com.gymcompanion.app.ui.theme.*
 import kotlin.math.cos
@@ -42,8 +43,11 @@ fun NothingCard(
 
     Column(
         modifier = base
-            .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
-            .padding(14.dp)
+            .clickable(
+                enabled = onClick != null,
+                onClick = { onClick?.invoke() }
+            )
+            .padding(18.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -57,9 +61,9 @@ fun NothingCard(
                 Text(
                     text = title,
                     color = Color(0xFFEEEEEE),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 0.8.sp
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.1.sp
                 )
                 if (onClick != null) {
                     Icon(
@@ -92,7 +96,7 @@ fun WidgetForm(
     content: @Composable ColumnScope.() -> Unit
 ) {
     NothingCard(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         title = title,
         onClick = onClick
     ) {
@@ -520,8 +524,8 @@ fun NLabel(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = NothingGrey2,
-    size: TextUnit = 9.sp,
-    letterSpacing: TextUnit = 2.4.sp
+    size: TextUnit = 12.sp,
+    letterSpacing: TextUnit = 0.8.sp
 ) {
     Text(
         text = text,
@@ -531,7 +535,8 @@ fun NLabel(
         fontWeight = FontWeight.Normal,
         fontSize = size,
         letterSpacing = letterSpacing,
-        maxLines = 1
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -542,7 +547,7 @@ fun Sparkline(
     modifier: Modifier = Modifier,
     color: Color = NothingBlue,
     dotColor: Color = NothingWhite,
-    strokeWidth: Dp = 1.5.dp,
+    strokeWidth: Dp = 2.5.dp,
     targetValue: Float? = null
 ) {
     Canvas(modifier = modifier) {

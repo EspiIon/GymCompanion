@@ -41,6 +41,8 @@ Centraliser les couleurs dans `ui/theme/Theme.kt`. Réutiliser `NothingCard`, `W
 
 ## États et interactions
 
+Le compagnon est une présence partagée dans un bandeau sous la barre d'état, et non une destination à part entière. Son toucher ouvre une fiche flottante compacte pour les réactions, les objectifs et le nom. La mascotte doit rester décorative pour l'action et ne pas masquer les données.
+
 Chaque parcours concerné doit prévoir son état vide, son chargement, son erreur et sa réussite. Les messages expliquent l'action possible. Une absence de mesure n'est pas un zéro mesuré. Après une suppression courante, préférer une possibilité d'annuler lorsque les données le permettent ; la restauration qui remplace un historique doit expliquer clairement son effet.
 
 ## Compose et animation

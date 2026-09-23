@@ -129,16 +129,16 @@ fun BodyScreen(
                         val sorted = weights.sortedBy { it.date }
                         Row(Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween) {
-                            NLabel("ÉVOLUTION · 30 J")
+                            NLabel("MESURES SUR 30 JOURS", size = 12.sp)
                             NLabel("${numStr(sorted.first().weightKg!!)} → ${numStr(sorted.last().weightKg!!)} KG",
                                 color = NothingGrey1)
                         }
-                        Spacer(Modifier.height(16.dp))
-                        Sparkline(
+                        Spacer(Modifier.height(20.dp))
+                        InteractiveTrendChart(
                             values = sorted.mapNotNull { it.weightKg },
-                            color = NothingBlue, dotColor = NothingWhite,
-                            modifier = Modifier.fillMaxWidth().height(70.dp),
-                            targetValue = targetWeightKg
+                            labels = sorted.map { it.date },
+                            targetValue = targetWeightKg,
+                            modifier = Modifier.fillMaxWidth().height(210.dp)
                         )
                     }
                 }
@@ -195,7 +195,7 @@ fun BodyScreen(
                                     TrendPoint(java.time.LocalDate.parse(r.date).toEpochDay(), it)
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth().height(120.dp)
+                            modifier = Modifier.fillMaxWidth().height(190.dp)
                         )
                     }
                 }
@@ -560,7 +560,7 @@ fun AddBodyRecordDialog(
                         arm.toFloatOrNull()?.takeIf { it > 0f }
                     )
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = DataMint),
                 shape = RoundedCornerShape(10.dp)
             ) { Text("Enregistrer", color = NothingWhite) }
         },
@@ -587,7 +587,7 @@ private fun LegendEntry(color: Color, dashed: Boolean, label: String) {
                 Box(Modifier.width(16.dp).height(2.dp).background(color, RoundedCornerShape(1.dp)))
             }
         }
-        NLabel(label, size = 7.sp, color = NothingGrey2)
+        NLabel(label, size = 12.sp, color = NothingGrey2)
     }
 }
 
@@ -595,11 +595,11 @@ private fun LegendEntry(color: Color, dashed: Boolean, label: String) {
 private fun DeltaChip(prefix: String, delta: Float, unit: String, color: Color) {
     Row(verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        NLabel(prefix, size = 8.sp, color = NothingGrey3)
+        NLabel(prefix, size = 12.sp, color = NothingGrey2)
         NumText(
             "${if (delta >= 0f) "+" else ""}${numStr(delta)}",
-            fontSize = 13.sp, color = color
+            fontSize = 15.sp, color = color
         )
-        NLabel(unit, size = 8.sp, color = NothingGrey3)
+        NLabel(unit, size = 12.sp, color = NothingGrey2)
     }
 }
