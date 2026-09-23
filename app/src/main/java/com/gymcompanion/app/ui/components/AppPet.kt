@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,11 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -48,9 +51,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gymcompanion.app.data.model.PetMood
+import com.gymcompanion.app.ui.theme.DataLavender
 import com.gymcompanion.app.ui.theme.DataMint
+import com.gymcompanion.app.ui.theme.DataOrange
+import com.gymcompanion.app.ui.theme.NothingBorderMid
 import com.gymcompanion.app.ui.theme.NothingBlack
 import com.gymcompanion.app.ui.theme.NothingCardSurface
+import com.gymcompanion.app.ui.theme.NothingDark
 import com.gymcompanion.app.ui.theme.NothingDark2
 import com.gymcompanion.app.ui.theme.NothingGrey1
 import com.gymcompanion.app.ui.theme.NothingGrey2
@@ -70,6 +77,8 @@ fun AppPet(
     mood: PetMood,
     name: String,
     modifier: Modifier = Modifier,
+    variant: Int = 0,
+    colorIndex: Int = 0,
     onTap: () -> Unit = {}
 ) {
     val transition = rememberInfiniteTransition("app-pet")
@@ -83,6 +92,25 @@ fun AppPet(
         label = "bob"
     )
 
+    val petColor = when (colorIndex) {
+        1 -> DataMint
+        2 -> DataLavender
+        3 -> DataOrange
+        else -> PetCream
+    }
+    val petShade = when (colorIndex) {
+        1 -> Color(0xFF2F8F78)
+        2 -> Color(0xFF7665C7)
+        3 -> Color(0xFFC76C2D)
+        else -> PetCreamShade
+    }
+    val bodyWidthFactor = when (variant) {
+        1 -> 0.9f
+        2 -> 1.08f
+        3 -> 0.82f
+        else -> 1f
+    }
+
     Box(
         modifier = modifier
             .semantics { contentDescription = "$name, compagnon. Toucher pour interagir." }
@@ -94,8 +122,8 @@ fun AppPet(
             val unit = size.minDimension / 16f
             val centerX = size.width / 2f
             val centerY = size.height / 2f + bob * unit * 0.16f
-            val bodyWidth = unit * 10.2f
-            val bodyHeight = unit * 8.4f
+            val bodyWidth = unit * 10.2f * bodyWidthFactor
+            val bodyHeight = unit * (if (variant == 3) 9.2f else 8.4f)
             val topLeft = Offset(centerX - bodyWidth / 2f, centerY - bodyHeight * 0.40f)
 
             // Petites oreilles triangulaires.
@@ -111,24 +139,24 @@ fun AppPet(
                 lineTo(topLeft.x + bodyWidth - unit * 3.2f, topLeft.y + unit * 0.2f)
                 close()
             }
-            drawPath(leftEar, PetCreamShade)
-            drawPath(rightEar, PetCreamShade)
+            drawPath(leftEar, petShade)
+            drawPath(rightEar, petShade)
 
             // Corps, tête et pattes : une silhouette compacte lisible à 48 dp.
             drawRoundRect(
-                color = PetCream,
+                color = petColor,
                 topLeft = topLeft,
                 size = Size(bodyWidth, bodyHeight),
                 cornerRadius = CornerRadius(unit * 3.2f)
             )
             drawRoundRect(
-                color = PetCream,
+                color = petColor,
                 topLeft = Offset(centerX - unit * 4.2f, centerY + unit * 2.0f),
                 size = Size(unit * 3.0f, unit * 3.1f),
                 cornerRadius = CornerRadius(unit * 1.4f)
             )
             drawRoundRect(
-                color = PetCream,
+                color = petColor,
                 topLeft = Offset(centerX + unit * 1.2f, centerY + unit * 2.0f),
                 size = Size(unit * 3.0f, unit * 3.1f),
                 cornerRadius = CornerRadius(unit * 1.4f)
@@ -214,6 +242,8 @@ fun AppPetBar(
         AppPet(
             mood = state.mood,
             name = state.name,
+            variant = state.variant,
+            colorIndex = state.colorIndex,
             onTap = onClick,
             modifier = Modifier.size(58.dp)
         )
@@ -264,7 +294,9 @@ fun AppPetSheet(
     state: PetUiState,
     onDismiss: () -> Unit,
     onPet: () -> Unit,
-    onRename: (String) -> Unit
+    onRename: (String) -> Unit,
+    onVariant: (Int) -> Unit,
+    onColor: (Int) -> Unit
 ) {
     var name by remember(state.name) { mutableStateOf(state.name) }
     val progress = if (state.goalsTotal > 0) state.goalsMet.toFloat() / state.goalsTotal else 0f
@@ -283,6 +315,8 @@ fun AppPetSheet(
                 AppPet(
                     mood = state.mood,
                     name = state.name,
+                    variant = state.variant,
+                    colorIndex = state.colorIndex,
                     onTap = onPet,
                     modifier = Modifier.size(118.dp)
                 )
@@ -324,6 +358,36 @@ fun AppPetSheet(
             }
 
             Spacer(Modifier.height(14.dp))
+            NLabel("APPARENCE", color = NothingGrey2, size = 12.sp)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf("Pixel", "Mochi", "Suki", "Nova").forEachIndexed { index, label ->
+                    NothingActionButton(
+                        onClick = { onVariant(index) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(label, fontSize = 12.sp, color = if (state.variant == index) DataOrange else NothingWhite)
+                    }
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                listOf(PetCream, DataMint, DataLavender, DataOrange).forEachIndexed { index, color ->
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(color)
+                            .border(
+                                width = if (state.colorIndex == index) 3.dp else 1.dp,
+                                color = if (state.colorIndex == index) NothingWhite else NothingBorderMid,
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            )
+                            .clickable { onColor(index) }
+                    )
+                }
+            }
+            Spacer(Modifier.height(14.dp))
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it.take(20) },
@@ -337,7 +401,7 @@ fun AppPetSheet(
                 Button(
                     onClick = { onRename(name); onDismiss() },
                     enabled = name.isNotBlank(),
-                    colors = ButtonDefaults.buttonColors(containerColor = DataMint, contentColor = NothingBlack),
+                    colors = ButtonDefaults.buttonColors(containerColor = NothingDark, contentColor = NothingWhite),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Enregistrer")

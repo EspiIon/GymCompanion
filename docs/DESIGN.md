@@ -8,6 +8,8 @@ Une interface inspirée de Nothing OS : fond noir, cartes plates, typographie ex
 
 Centraliser les couleurs dans `ui/theme/Theme.kt`. Réutiliser `NothingCard`, `WidgetForm`, `NumText`, `NLabel` et les FAB de `ui/components/Components.kt`.
 
+La palette conserve le contraste Nothing (noir, blanc cassé, gris et surfaces charbon) et utilise des accents fonctionnels plutôt qu'une couleur décorative par carte : orange pour la nutrition, bleu pour l'activité, menthe pour la progression positive et lavande pour la force. Les boutons d'action restent noirs/charbon avec une bordure Nothing ; les couleurs chaudes sont réservées aux données.
+
 | Usage | Référence actuelle | Règle |
 | --- | --- | --- |
 | Fond | `NothingBlack`, `#000000` | Fond principal |
@@ -17,8 +19,11 @@ Centraliser les couleurs dans `ui/theme/Theme.kt`. Réutiliser `NothingCard`, `W
 | Bordures internes | `NothingBorder`, `NothingBorderMid`, `NothingBorderStrong` | Séparations et contrôles utiles |
 | Texte | `NothingWhite`, `NothingGrey1`, `NothingGrey2` | Hiérarchie lisible |
 | Rouge | `NothingRed` | État, erreur, suppression ; conserver une indication textuelle |
-| Jaune | `NothingYellow` | Accent ponctuel, notamment IA/scan |
-| Bleu | `NothingBlue` | Progression ; le bleu actuel très sombre doit être vérifié sur fond noir |
+| Nutrition | `DataOrange`, `DataAmber`, `DataCoral` | Calories et macros : accents chauds, sans colorer les boutons |
+| Activité | `DataBlue` | Pas et graphiques d'activité |
+| Progression | `DataMint` | Progression positive et validation |
+| Force | `DataLavender` | Volume, charge et 1RM |
+| Mascotte | `PetCream` et variantes | Couleurs choisies par le compagnon |
 
 Éviter `NothingGrey3` pour une information importante. Ne pas utiliser le bleu sombre pour du petit texte. Une nouvelle couleur plus lisible doit être un token du thème, pas une valeur ajoutée dans un écran. Les couleurs macro existantes restent à harmoniser ; limiter la concurrence entre accents.
 

@@ -33,50 +33,77 @@ fun NothingCard(
     modifier: Modifier = Modifier,
     title: String? = null,
     onClick: (() -> Unit)? = null,
+    pet: com.gymcompanion.app.viewmodel.PetUiState? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val cardColor = Color(0xFF171717)
+    val cardColor = NothingCardSurface
     val shape = RoundedCornerShape(24.dp)
+    val petTransition = rememberInfiniteTransition("card-pet-border")
+    val petTravel by petTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4_800, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "card-pet-travel"
+    )
     val base = modifier
         .clip(shape)
         .background(cardColor)
 
-    Column(
+    Box(
         modifier = base
             .clickable(
                 enabled = onClick != null,
                 onClick = { onClick?.invoke() }
             )
             .padding(18.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
     ) {
-        // En-tête type Nothing
-        if (title != null) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    color = Color(0xFFEEEEEE),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.1.sp
-                )
-                if (onClick != null) {
-                    Icon(
-                        imageVector = Icons.Rounded.NorthEast,
-                        contentDescription = "Ouvrir",
-                        tint = Color(0xFF757575),
-                        modifier = Modifier.size(16.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (title != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        color = NothingWhite,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.1.sp
                     )
+                    if (onClick != null) {
+                        Icon(
+                            imageVector = Icons.Rounded.NorthEast,
+                            contentDescription = "Ouvrir",
+                            tint = NothingGrey2,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
+                Spacer(Modifier.height(14.dp))
             }
-            Spacer(Modifier.height(14.dp))
+            content()
         }
-        content()
+        pet?.let { state ->
+            AppPet(
+                mood = state.mood,
+                name = state.name,
+                variant = state.variant,
+                colorIndex = state.colorIndex,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(34.dp)
+                    .offset(x = (-18 * petTravel).dp),
+                onTap = {}
+            )
+        }
     }
 }
 
@@ -93,12 +120,14 @@ fun WidgetForm(
     modifier: Modifier = Modifier,
     title: String? = null,
     onClick: (() -> Unit)? = null,
+    pet: com.gymcompanion.app.viewmodel.PetUiState? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     NothingCard(
         modifier = modifier.fillMaxWidth(),
         title = title,
-        onClick = onClick
+        onClick = onClick,
+        pet = pet
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             content()
@@ -107,6 +136,25 @@ fun WidgetForm(
 }
 
 // ── Standard Floating Action Buttons ───────────────────────────────────────────
+@Composable
+fun NothingActionButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.heightIn(min = 48.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = NothingDeep,
+            contentColor = NothingWhite
+        ),
+        border = BorderStroke(1.dp, NothingBorderMid),
+        content = content
+    )
+}
+
 @Composable
 fun StandardFAB(
     onClick: () -> Unit,

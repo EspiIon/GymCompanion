@@ -160,7 +160,9 @@ fun GymCompanionAppUI() {
             state = petState,
             onDismiss = { showPetSheet = false },
             onPet = petViewModel::pet,
-            onRename = petViewModel::rename
+            onRename = petViewModel::rename,
+            onVariant = petViewModel::setVariant,
+            onColor = petViewModel::setColor
         )
     }
 }

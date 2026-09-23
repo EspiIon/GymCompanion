@@ -112,7 +112,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                         Spacer(Modifier.height(18.dp))
                         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             Box(Modifier.size(200.dp), contentAlignment = Alignment.Center) {
-                                SegmentedArc(progress = progress, color = NothingBlue, dotCount = 60,
+                                SegmentedArc(progress = progress, color = DataOrange, dotCount = 60,
                                     modifier = Modifier.fillMaxSize())
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     NumText("$remaining", fontSize = 60.sp, fontWeight = FontWeight.Medium)
@@ -136,7 +136,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
-                                NLabel("PROTÉINES", size = 9.sp, color = NothingGrey2)
+                                NLabel("PROTÉINES", size = 12.sp, color = NothingGrey2)
                                 Spacer(Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     NumText("${macroTotals.totalProtein.toInt()}g", fontSize = 13.sp, color = NothingWhite)
@@ -145,7 +145,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             }
                             val proteinProg = (macroTotals.totalProtein / nutritionGoals.protein.coerceAtLeast(1f)).coerceIn(0f, 1f)
                             Box(Modifier.width(60.dp).height(6.dp).background(NothingBorder, RoundedCornerShape(2.dp))) {
-                                Box(Modifier.fillMaxHeight().fillMaxWidth(proteinProg).background(NothingWhite, RoundedCornerShape(2.dp)))
+                                Box(Modifier.fillMaxHeight().fillMaxWidth(proteinProg).background(ProteinColor, RoundedCornerShape(2.dp)))
                             }
                         }
 
@@ -154,7 +154,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
-                                NLabel("GLUCIDES", size = 9.sp, color = NothingGrey2)
+                                NLabel("GLUCIDES", size = 12.sp, color = NothingGrey2)
                                 Spacer(Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     NumText("${macroTotals.totalCarbs.toInt()}g", fontSize = 13.sp, color = NothingWhite)
@@ -163,7 +163,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             }
                             val carbsProg = (macroTotals.totalCarbs / nutritionGoals.carbs.coerceAtLeast(1f)).coerceIn(0f, 1f)
                             Box(Modifier.width(60.dp).height(6.dp).background(NothingBorder, RoundedCornerShape(2.dp))) {
-                                Box(Modifier.fillMaxHeight().fillMaxWidth(carbsProg).background(NothingGrey1, RoundedCornerShape(2.dp)))
+                                Box(Modifier.fillMaxHeight().fillMaxWidth(carbsProg).background(CarbsColor, RoundedCornerShape(2.dp)))
                             }
                         }
 
@@ -172,7 +172,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
-                                NLabel("LIPIDES", size = 9.sp, color = NothingGrey2)
+                                NLabel("LIPIDES", size = 12.sp, color = NothingGrey2)
                                 Spacer(Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     NumText("${macroTotals.totalFat.toInt()}g", fontSize = 13.sp, color = NothingWhite)
@@ -181,7 +181,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                             }
                             val fatProg = (macroTotals.totalFat / nutritionGoals.fat.coerceAtLeast(1f)).coerceIn(0f, 1f)
                             Box(Modifier.width(60.dp).height(6.dp).background(NothingBorder, RoundedCornerShape(2.dp))) {
-                                Box(Modifier.fillMaxHeight().fillMaxWidth(fatProg).background(NothingRed, RoundedCornerShape(2.dp)))
+                                Box(Modifier.fillMaxHeight().fillMaxWidth(fatProg).background(FatColor, RoundedCornerShape(2.dp)))
                             }
                         }
 
@@ -413,7 +413,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                         viewModel.addCreatine(taken = true, grams = g, notes = notes)
                         showCreatineDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                    colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                     shape = RoundedCornerShape(8.dp)
                 ) { Text("Enregistrer", color = NothingWhite) }
             },
@@ -507,7 +507,7 @@ private fun QuickAddRow(
     WidgetForm(modifier = Modifier.fillMaxWidth(), title = "QUICK ADD · FAVORIS & RÉCENTS") {
         Column(Modifier.padding(top = 14.dp)) {
             if (favorites.isNotEmpty()) {
-                NLabel("FAVORIS · TAP POUR AJOUTER", size = 8.sp, color = NothingYellow, modifier = Modifier.padding(horizontal = PAD))
+                NLabel("FAVORIS · TAP POUR AJOUTER", size = 12.sp, color = DataOrange, modifier = Modifier.padding(horizontal = PAD))
                 Spacer(Modifier.height(8.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp), contentPadding = PaddingValues(horizontal = PAD)) {
                     items(favorites, key = { "qa_fav_" + it.name }) { fe ->
@@ -774,7 +774,7 @@ fun AddFoodDialog(
                         autoMacros = false   // valeurs réelles enregistrées
                     }
                     if (favoriteFoods.isNotEmpty()) {
-                        NLabel("FAVORIS", size = 8.sp, color = NothingYellow)
+                        NLabel("FAVORIS", size = 12.sp, color = DataOrange)
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             items(favoriteFoods, key = { "fav_" + it.name }) { fe ->
                                 QuickFoodChip(fe.name, star = true) { fill(fe) }
@@ -1014,7 +1014,7 @@ fun AddFoodDialog(
                     if (name.isNotBlank() && cal > 0)
                         onConfirm(name, cal, p, c, f, mealType, gOut, qOut, uOut, unit, "")
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(10.dp)
             ) { Text("Ajouter", color = NothingWhite) }
         },
@@ -1340,7 +1340,7 @@ fun EditFoodEntryDialog(
                         )
                     )
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(10.dp)
             ) { Text("Enregistrer", color = NothingWhite) }
         },

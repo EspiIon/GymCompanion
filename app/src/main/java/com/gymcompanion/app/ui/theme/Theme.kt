@@ -35,7 +35,9 @@ val NothingGrey3   = Color(0xFF777777)   // texte secondaire discret : jamais un
 val DataBlue        = Color(0xFF63A7FF)
 val DataMint        = Color(0xFF59D6B4)
 val DataLavender    = Color(0xFFB3A5FF)
-val DataAmber       = Color(0xFFFFC700)
+val DataOrange      = Color(0xFFFF9F43)
+val DataAmber       = Color(0xFFFFC857)
+val DataCoral       = Color(0xFFE76F51)
 val PetCream        = Color(0xFFFFD7A3)
 val PetCreamShade   = Color(0xFFB97843)
 
@@ -59,16 +61,16 @@ val BorderSubtle    = NothingBorder
 val Error           = NothingRed
 
 // ── Nutrition macro accents (data values only, labels stay grey) ──────────────
-val ProteinColor = NothingGrey1           // monochrome — protein stays neutral
-val CarbsColor   = NothingYellow          // carbs
-val FatColor     = NothingRed             // fat
-val CalorieColor = NothingYellow          // calorie ring/values
+val ProteinColor = Color(0xFFEAC7A4)     // ivoire chaud : protéines
+val CarbsColor   = DataAmber              // glucides : jaune doux
+val FatColor     = DataCoral              // lipides : corail chaud
+val CalorieColor = DataOrange             // calories : orange principal
 
 // ── Special ───────────────────────────────────────────────────────────────────
 val StreakColor    = NothingRed
 val StreakGlow     = Color(0xFF8A0A1E)
 val FatArcColor    = NothingRed
-val MuscleArcColor = NothingYellow
+val MuscleArcColor = DataLavender
 
 // ── Kept for compatibility with older references ──────────────────────────────
 val AccentPurple   = Color(0xFF7B6FFF)   // deprecated — do not use in new code

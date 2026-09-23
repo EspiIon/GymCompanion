@@ -51,7 +51,7 @@ fun StepsScreen(viewModel: StepsViewModel = hiltViewModel()) {
             WidgetForm(modifier = Modifier.fillMaxWidth(), title = "PAS QUOTIDIENS") {
                 Spacer(Modifier.height(8.dp))
                 Box(Modifier.size(240.dp), contentAlignment = Alignment.Center) {
-                    SegmentedArc(progress = progress, color = NothingBlue, dotCount = 64,
+                    SegmentedArc(progress = progress, color = DataBlue, dotCount = 64,
                         modifier = Modifier.fillMaxSize())
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         NumText("$steps", fontSize = 64.sp, fontWeight = FontWeight.Medium)
@@ -60,7 +60,7 @@ fun StepsScreen(viewModel: StepsViewModel = hiltViewModel()) {
                     }
                 }
                 Spacer(Modifier.height(18.dp))
-                GlyphSegmentBar(progress = progress, color = NothingBlue, segmentCount = 20,
+                GlyphSegmentBar(progress = progress, color = DataBlue, segmentCount = 20,
                     segmentHeight = 7f, modifier = Modifier.padding(horizontal = 24.dp))
                 Spacer(Modifier.height(8.dp))
             }
@@ -94,16 +94,14 @@ fun StepsScreen(viewModel: StepsViewModel = hiltViewModel()) {
             }
         }
 
-        item(key = "chart_head") {
-            Spacer(Modifier.height(8.dp))
-            WidgetForm(modifier = Modifier.fillMaxWidth(), title = "7 DERNIERS JOURS") {
-                Spacer(Modifier.height(16.dp))
-            }
-        }
         item(key = "chart") {
-            WidgetForm(modifier = Modifier.fillMaxWidth()) {
-                WeekChart(records = weekHistory.take(7).reversed(),
-                    modifier = Modifier.fillMaxWidth())
+            WidgetForm(modifier = Modifier.fillMaxWidth(), title = "ACTIVITÉ SUR 7 JOURS") {
+                InteractiveTrendChart(
+                    values = weekHistory.take(7).reversed().map { it.steps.toFloat() },
+                    labels = weekHistory.take(7).reversed().map { it.date },
+                    valueFormatter = { value -> "${value.toInt()} pas" },
+                    modifier = Modifier.fillMaxWidth().height(190.dp)
+                )
             }
         }
     }
@@ -209,7 +207,7 @@ fun StepsEditDialog(
                     val g = goal.toIntOrNull()?.coerceAtLeast(1) ?: return@Button
                     onConfirm(s, g)
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NothingBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = NothingDeep, contentColor = NothingWhite),
                 shape = RoundedCornerShape(8.dp)
             ) { Text("Enregistrer", color = NothingWhite) }
         },

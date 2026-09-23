@@ -175,7 +175,8 @@ fun DashboardScreen(
             WidgetForm(
                 modifier = Modifier.fillMaxWidth(),
                 title = "CALORIES RESTANTES",
-                onClick = onNavigateToNutrition
+                onClick = onNavigateToNutrition,
+                pet = petState
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -183,7 +184,7 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(128.dp)) {
-                        SegmentedArc(progress = calProgress, color = DataMint, modifier = Modifier.fillMaxSize())
+                        SegmentedArc(progress = calProgress, color = DataOrange, modifier = Modifier.fillMaxSize())
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             NumText("${state.todayCalories}", fontSize = 34.sp)
                             Spacer(Modifier.height(4.dp))
@@ -215,6 +216,8 @@ fun DashboardScreen(
                 AppPet(
                     mood = petState.mood,
                     name = petState.name,
+                    variant = petState.variant,
+                    colorIndex = petState.colorIndex,
                     onTap = onNavigateToPet,
                     modifier = Modifier.size(38.dp)
                 )

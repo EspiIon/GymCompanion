@@ -45,6 +45,8 @@ class SettingsViewModel @Inject constructor(
         val AUTO_BACKUP_PREF         = booleanPreferencesKey("auto_backup_enabled")
         val LAST_BACKUP_AT_PREF      = longPreferencesKey("last_backup_at")
         val PET_STYLE_PREF           = intPreferencesKey("pet_trame_style")
+        val PET_VARIANT_PREF         = intPreferencesKey("pet_variant")
+        val PET_COLOR_PREF           = intPreferencesKey("pet_color")
     }
 
     val userProfile: StateFlow<UserProfile?> =

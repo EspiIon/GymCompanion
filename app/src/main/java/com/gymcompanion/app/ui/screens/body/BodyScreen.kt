@@ -138,7 +138,7 @@ fun BodyScreen(
                             values = sorted.mapNotNull { it.weightKg },
                             labels = sorted.map { it.date },
                             targetValue = targetWeightKg,
-                            modifier = Modifier.fillMaxWidth().height(210.dp)
+                            modifier = Modifier.fillMaxWidth().height(240.dp)
                         )
                     }
                 }
@@ -195,7 +195,7 @@ fun BodyScreen(
                                     TrendPoint(java.time.LocalDate.parse(r.date).toEpochDay(), it)
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth().height(190.dp)
+                            modifier = Modifier.fillMaxWidth().height(210.dp)
                         )
                     }
                 }

@@ -97,7 +97,7 @@ private fun ExerciseCard(
                 labels = emptyList(),
                 targetValue = null,
                 valueFormatter = { value -> "${value.toInt()} kg" },
-                modifier = Modifier.fillMaxWidth().height(if (expanded) 210.dp else 92.dp)
+                modifier = Modifier.fillMaxWidth().height(if (expanded) 230.dp else 110.dp)
             )
         }
 

@@ -11,6 +11,8 @@ import com.gymcompanion.app.data.repository.GymRepository
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.AUTO_MACRO_GOALS_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.CALORIE_GOAL_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_STYLE_PREF
+import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_VARIANT_PREF
+import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PET_COLOR_PREF
 import com.gymcompanion.app.viewmodel.SettingsViewModel.Companion.PROTEIN_GOAL_PREF
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -26,7 +28,9 @@ data class PetUiState(
     val happiness: Int = 60,
     val mood: PetMood = PetMood.NEUTRAL,
     val goals: List<PetGoal> = emptyList(),
-    val message: String = ""
+    val message: String = "",
+    val variant: Int = 0,
+    val colorIndex: Int = 0
 ) {
     val goalsMet get() = goals.count { it.met }
     val goalsTotal get() = goals.size
@@ -61,8 +65,24 @@ class PetViewModel @Inject constructor(
         dataStore.data.map { it[PET_STYLE_PREF] ?: 0 }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
+    val petVariant: StateFlow<Int> =
+        dataStore.data.map { it[PET_VARIANT_PREF] ?: 0 }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val petColor: StateFlow<Int> =
+        dataStore.data.map { it[PET_COLOR_PREF] ?: 0 }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     fun setStyle(style: Int) = viewModelScope.launch {
         dataStore.edit { it[PET_STYLE_PREF] = style.coerceIn(0, 2) }
+    }
+
+    fun setVariant(variant: Int) = viewModelScope.launch {
+        dataStore.edit { it[PET_VARIANT_PREF] = variant.coerceIn(0, 3) }
+    }
+
+    fun setColor(color: Int) = viewModelScope.launch {
+        dataStore.edit { it[PET_COLOR_PREF] = color.coerceIn(0, 4) }
     }
 
     /**
@@ -162,7 +182,9 @@ class PetViewModel @Inject constructor(
             happiness = happiness,
             mood = moodFor(happiness),
             goals = goals,
-            message = message
+            message = message,
+            variant = prefs[PET_VARIANT_PREF] ?: 0,
+            colorIndex = prefs[PET_COLOR_PREF] ?: 0
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PetUiState())
 
