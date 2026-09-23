@@ -69,7 +69,7 @@ fun GoalsScreen(viewModel: GoalViewModel = hiltViewModel()) {
                             Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
                                 SegmentedArc(
                                     progress = if (total > 0) done.toFloat() / total else 0f,
-                                    color = NothingBlue,
+                                    color = DataLavender,
                                     dotCount = 36,
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -185,7 +185,7 @@ fun GoalsScreen(viewModel: GoalViewModel = hiltViewModel()) {
         // ── FAB ─────────────────────────────────────────────────────────────
         StandardFAB(
             onClick = { showAddDialog = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 110.dp),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 16.dp),
             icon = Icons.Rounded.Add,
             contentDescription = "Ajouter objectif"
         )
@@ -216,11 +216,11 @@ private fun GoalItem(goal: Goal, onToggle: () -> Unit, onDelete: () -> Unit) {
                 .size(20.dp)
                 .border(
                     1.dp,
-                    if (goal.isCompleted) NothingBlue else NothingBorderMid,
+                    if (goal.isCompleted) DataMint else NothingBorderMid,
                     CircleShape
                 )
                 .background(
-                    if (goal.isCompleted) NothingBlue else Color.Transparent,
+                    if (goal.isCompleted) DataMint else Color.Transparent,
                     CircleShape
                 )
                 .clickable(onClick = onToggle),

@@ -24,7 +24,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 private val PAD = 24.dp
-private val NutritionDotColor = NothingYellow
+private val NutritionDotColor = DataOrange
 
 @Composable
 fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {

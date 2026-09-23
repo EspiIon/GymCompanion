@@ -34,7 +34,7 @@ fun BodyDetailScreen(
     val visits by viewModel.allGymVisits.collectAsStateWithLifecycle()
     val isMuscle = dataType == "muscle"
 
-    val accentColor = if (isMuscle) NothingBlue else NothingRed
+    val accentColor = if (isMuscle) DataLavender else DataCoral
     val title = if (isMuscle) "Analyse Musculaire" else "Masse Graisseuse"
 
     Box(Modifier.fillMaxSize().background(NothingBlack)) {
@@ -140,14 +140,15 @@ fun BodyDetailScreen(
                                 val firstVal = dataPoints.first().second
                                 val lastVal = dataPoints.last().second
                                 val delta = lastVal - firstVal
-                                NLabel("${if (delta >= 0) "+" else ""}${numStr(delta)} ${if (isMuscle) "KG" else "%"}", color = if (isMuscle && delta >= 0 || !isMuscle && delta <= 0) NothingWhite else NothingRed)
+                                NLabel("${if (delta >= 0) "+" else ""}${numStr(delta)} ${if (isMuscle) "KG" else "%"}", color = if (isMuscle && delta >= 0 || !isMuscle && delta <= 0) NothingWhite else DataCoral)
                             }
                             Spacer(Modifier.height(16.dp))
-                            Sparkline(
+                            InteractiveTrendChart(
                                 values = dataPoints.map { it.second },
-                                color = accentColor,
-                                dotColor = NothingWhite,
-                                modifier = Modifier.fillMaxWidth().height(120.dp)
+                                labels = dataPoints.map { LocalDate.ofEpochDay(it.first).toString() },
+                                targetValue = null,
+                                valueFormatter = { value -> "${numStr(value)} ${if (isMuscle) "kg" else "%"}" },
+                                modifier = Modifier.fillMaxWidth().height(190.dp)
                             )
                             Spacer(Modifier.height(8.dp))
                         }

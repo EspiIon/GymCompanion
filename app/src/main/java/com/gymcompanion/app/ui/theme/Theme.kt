@@ -44,7 +44,7 @@ val PetCreamShade   = Color(0xFFB97843)
 // ── Primary accents (official) — never decorative, one moment per screen ──────
 val NothingRed     = Color(0xFFC8102E)   // N-Red — STATUS: streak, "today", over-limit
 val NothingYellow  = Color(0xFFFFC700)   // N-Yellow — INTELLIGENCE: AI / scan auto-fill only
-val NothingBlue    = Color(0xFF002F6C)   // N-Blue — PROGRESS: rings / bars only
+val NothingBlue    = DataBlue             // compatibilité : bleu de données lisible
 
 // ── Legacy semantic aliases (kept so screens compile unchanged) ───────────────
 val Primary         = NothingWhite
@@ -73,9 +73,9 @@ val FatArcColor    = NothingRed
 val MuscleArcColor = DataLavender
 
 // ── Kept for compatibility with older references ──────────────────────────────
-val AccentPurple   = Color(0xFF7B6FFF)   // deprecated — do not use in new code
-val AccentTeal     = Color(0xFF00D4AA)   // deprecated — do not use in new code
-val AccentOrange   = NothingRed          // remapped — streaks/calories now official red
+val AccentPurple   = DataLavender        // compatibilité
+val AccentTeal     = DataMint            // compatibilité
+val AccentOrange   = DataOrange          // compatibilité
 val AccentRed      = NothingRed
 val AccentAmber    = NothingYellow
 

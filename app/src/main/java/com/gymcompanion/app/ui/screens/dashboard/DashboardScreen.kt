@@ -486,10 +486,12 @@ private fun BodyWidget(rec: BodyRecord, history: List<BodyRecord>, onClick: () -
             }
             Spacer(Modifier.width(20.dp))
             if (weights.size >= 2) {
-                Sparkline(
+                InteractiveTrendChart(
                     values = weights.takeLast(14),
-                    color = NothingBlue, dotColor = NothingWhite,
-                    modifier = Modifier.weight(1f).height(44.dp)
+                    labels = emptyList(),
+                    targetValue = null,
+                    valueFormatter = { value -> "${numStr(value)} kg" },
+                    modifier = Modifier.weight(1f).height(78.dp)
                 )
             } else {
                 Spacer(Modifier.weight(1f))

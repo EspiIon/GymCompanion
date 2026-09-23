@@ -55,7 +55,7 @@ fun BodyScreen(
     var showHistory by remember { mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize().background(NothingBlack)) {
-        LazyColumn(contentPadding = PaddingValues(bottom = 110.dp)) {
+        LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
 
             item(key = "header") {
                 Row(
@@ -270,7 +270,7 @@ private fun ProjectionCard(projection: WeightProjection, modifier: Modifier = Mo
             is WeightProjection.OnTrack -> {
                 Row(verticalAlignment = Alignment.Bottom) {
                     NumText(numStr(projection.targetKg), fontSize = 40.sp, fontWeight = FontWeight.Medium,
-                        color = NothingBlue)
+                        color = DataLavender)
                     Spacer(Modifier.width(6.dp))
                     NLabel("KG", size = 11.sp, modifier = Modifier.padding(bottom = 7.dp))
                 }
@@ -342,7 +342,7 @@ private fun BodyHero(
                     .clickable { onNavigateToDetail("fat") },
                     contentAlignment = Alignment.Center) {
                     ArcStat("GRAISSE", "${numStr(it)}%",
-                        (it / 40f).coerceIn(0f, 1f), NothingRed,
+                        (it / 40f).coerceIn(0f, 1f), DataCoral,
                         fatKg?.let { k -> "${numStr(k)} KG" } ?: "")
                 }
             }
@@ -350,7 +350,7 @@ private fun BodyHero(
                 Box(Modifier.weight(1f)
                     .clickable { onNavigateToDetail("muscle") },
                     contentAlignment = Alignment.Center) {
-                    ArcStat("MUSCLE", "${numStr(it)} KG", (it / 80f).coerceIn(0f, 1f), NothingBlue,
+                    ArcStat("MUSCLE", "${numStr(it)} KG", (it / 80f).coerceIn(0f, 1f), DataLavender,
                         record.weightKg?.let { w -> "${numStr(it / w * 100f)}%" } ?: "")
                 }
             }

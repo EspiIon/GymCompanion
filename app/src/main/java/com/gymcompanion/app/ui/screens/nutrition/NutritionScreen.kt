@@ -71,7 +71,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
                 Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)),
                     contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(color = NothingBlue, strokeWidth = 2.dp)
+                        CircularProgressIndicator(color = DataOrange, strokeWidth = 2.dp)
                         Spacer(Modifier.height(14.dp))
                         NLabel("RECHERCHE…", color = NothingGrey1)
                     }
@@ -82,7 +82,7 @@ fun NutritionScreen(viewModel: NutritionViewModel = hiltViewModel()) {
             val progress  = (consumed.toFloat() / nutritionGoals.calories).coerceIn(0f, 1f)
             val remaining = (nutritionGoals.calories - consumed).coerceAtLeast(0)
 
-            LazyColumn(contentPadding = PaddingValues(bottom = 110.dp)) {
+            LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
 
                 // ── Header + date nav ──────────────────────────────────────────
                 item(key = "header") {
@@ -746,7 +746,7 @@ fun AddFoodDialog(
                         trailingIcon = {
                             if (searchState is FoodSearchState.Loading) {
                                 CircularProgressIndicator(
-                                    color = NothingBlue, strokeWidth = 2.dp,
+                                    color = DataMint, strokeWidth = 2.dp,
                                     modifier = Modifier.size(16.dp))
                             } else if (onlineQuery.isNotBlank()) {
                                 IconButton(onClick = { onlineQuery = ""; onClearSearch() }) {

@@ -71,7 +71,7 @@ fun ProgressPhotoScreen(viewModel: ProgressPhotoViewModel = hiltViewModel()) {
                     if (allPhotos.isNotEmpty()) {
                         Column(horizontalAlignment = Alignment.End) {
                             NumText("${allPhotos.size}", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                            NLabel("PHOTOS", size = 7.sp, color = NothingGrey2)
+                            NLabel("PHOTOS", size = 12.sp, color = NothingGrey2)
                         }
                     }
                 }
@@ -94,7 +94,7 @@ fun ProgressPhotoScreen(viewModel: ProgressPhotoViewModel = hiltViewModel()) {
                             .padding(vertical = 10.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        NLabel(label, color = if (active) NothingWhite else NothingGrey3, size = 9.sp)
+                        NLabel(label, color = if (active) NothingWhite else NothingGrey2, size = 12.sp)
                     }
                 }
             }
@@ -112,7 +112,7 @@ fun ProgressPhotoScreen(viewModel: ProgressPhotoViewModel = hiltViewModel()) {
         // ── FABs (only on chronologie tab) ────────────────────────────────────
         if (selectedTab == 0) {
             Column(
-                Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 110.dp),
+                Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 // Gallery
@@ -199,7 +199,7 @@ private fun DateHeader(dateStr: String) {
         } catch (e: Exception) { dateStr }
     }
     Box(Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 4.dp)) {
-        NLabel(formatted.uppercase(), color = NothingGrey2, size = 9.sp)
+        NLabel(formatted.uppercase(), color = NothingGrey2, size = 12.sp)
     }
 }
 
@@ -333,7 +333,7 @@ private fun ComparerTab(allPhotos: List<ProgressPhoto>) {
     var showPickerFor by remember { mutableStateOf<String?>(null) } // "before" | "after"
 
     LazyColumn(
-        contentPadding = PaddingValues(start = PAD, end = PAD, top = 8.dp, bottom = 110.dp)
+        contentPadding = PaddingValues(start = PAD, end = PAD, top = 8.dp, bottom = 88.dp)
     ) {
         // Slider comparison
         if (beforePhoto != null && afterPhoto != null) {
@@ -411,7 +411,7 @@ private fun PhotoPickerSlot(
     modifier: Modifier = Modifier
 ) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        NLabel(label, size = 9.sp, color = NothingGrey2)
+        NLabel(label, size = 12.sp, color = NothingGrey2)
         Spacer(Modifier.height(8.dp))
         Box(
             Modifier
@@ -443,7 +443,7 @@ private fun PhotoPickerSlot(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Rounded.Add, null, tint = NothingGrey3, modifier = Modifier.size(28.dp))
                     Spacer(Modifier.height(6.dp))
-                    NLabel("CHOISIR", size = 8.sp, color = NothingGrey3)
+                    NLabel("CHOISIR", size = 12.sp, color = NothingGrey2)
                 }
             }
         }
@@ -457,7 +457,7 @@ private fun ComparisonSlider(before: ProgressPhoto, after: ProgressPhoto) {
     var sliderPos by remember { mutableStateOf(0.5f) }
     var widthPx   by remember { mutableIntStateOf(1) }
 
-    NLabel("GLISSEZ POUR COMPARER", size = 8.sp, color = NothingGrey2,
+    NLabel("GLISSEZ POUR COMPARER", size = 12.sp, color = NothingGrey2,
         modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
             .padding(bottom = 10.dp))
 
@@ -533,20 +533,20 @@ private fun ComparisonSlider(before: ProgressPhoto, after: ProgressPhoto) {
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color.Black.copy(alpha = 0.6f))
                 .padding(horizontal = 6.dp, vertical = 3.dp)
-        ) { NLabel("AVANT", size = 8.sp, color = NothingWhite) }
+        ) { NLabel("AVANT", size = 12.sp, color = NothingWhite) }
 
         Box(
             Modifier.align(Alignment.BottomEnd).padding(8.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color.Black.copy(alpha = 0.6f))
                 .padding(horizontal = 6.dp, vertical = 3.dp)
-        ) { NLabel("APRÈS", size = 8.sp, color = NothingWhite) }
+        ) { NLabel("APRÈS", size = 12.sp, color = NothingWhite) }
     }
 
     Spacer(Modifier.height(8.dp))
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        NLabel(before.date, size = 8.sp, color = NothingGrey2)
-        NLabel(after.date, size = 8.sp, color = NothingGrey2)
+        NLabel(before.date, size = 12.sp, color = NothingGrey2)
+        NLabel(after.date, size = 12.sp, color = NothingGrey2)
     }
 }
 

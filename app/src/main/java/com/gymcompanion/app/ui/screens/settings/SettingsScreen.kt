@@ -228,7 +228,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                             onCheckedChange = { localAutoMacro = it },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = NothingBlack,
-                                checkedTrackColor = NothingBlue,
+                                checkedTrackColor = DataMint,
                                 uncheckedThumbColor = NothingGrey3,
                                 uncheckedTrackColor = NothingBorder
                             )
@@ -520,7 +520,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     else
                         "Non connecté · nécessite la configuration OAuth (Google Cloud Console)",
                     size = 7.sp,
-                    color = if (driveEmail != null) NothingBlue.copy(alpha = 0.7f) else NothingGrey3
+                    color = if (driveEmail != null) DataMint else NothingGrey3
                 )
             }
             Spacer(Modifier.height(14.dp))

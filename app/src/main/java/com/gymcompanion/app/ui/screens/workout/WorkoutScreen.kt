@@ -84,7 +84,7 @@ fun WorkoutScreen(
     Box(Modifier.fillMaxSize().background(NothingBlack)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 110.dp)
+            contentPadding = PaddingValues(bottom = 88.dp)
         ) {
             item(key = "header") {
                 WidgetForm(modifier = Modifier.fillMaxWidth(), title = "ENTRAÎNEMENT · SÉANCES") {
@@ -403,8 +403,8 @@ private fun MuscleRadarChart(
                 fillPts.drop(1).forEach { lineTo(it.x, it.y) }
                 close()
             }
-            // Valeur = trait blanc, remplissage bleu officiel (couleur sur la donnée)
-            drawPath(path, NothingBlue.copy(alpha = 0.35f))
+            // Données de force : remplissage lavande, contour lisible.
+            drawPath(path, DataLavender.copy(alpha = 0.30f))
             for (i in fillPts.indices) {
                 drawLine(NothingWhite, fillPts[i], fillPts[(i + 1) % fillPts.size], 1.5f)
             }
